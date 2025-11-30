@@ -55,11 +55,11 @@ urls.Tracker = "https://gitlab.com/colcrunch/aa-hrapps/-/issues"
 
 [tool.hatch.build]
 include = [
-    "/aa-hrapps",
+    "/hrapps",
 ]
 
 [tool.hatch.version]
-path = "aa-hrapps/__init__.py"
+path = "hrapps/__init__.py"
 
 [tool.pycodestyle]
 max-line-length = 121
