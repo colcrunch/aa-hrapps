@@ -1,5 +1,9 @@
 from django.urls import re_path
 
-appname = 'hrapps'
+from . import views
 
-urlpatterns = []
+app_name = 'hrapps'
+
+urlpatterns = [
+    re_path(r"^$", views.dashboard, name="dashboard"),
+]
