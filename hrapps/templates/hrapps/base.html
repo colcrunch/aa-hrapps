@@ -1,0 +1,31 @@
+{% extends "allianceauth/base-bs5.html" %}
+
+{% load i18n %}
+{% load navactive %}
+
+{% block header_nav_brand %}{% translate "HR Apps" %}{% endblock %}
+
+{% block header_nav_collapse_left %}
+    <li class="nav-item">
+        <a
+            class="nav-link {% navactive request 'hrapps:dashboard' %}"
+            href="{% url 'hrapps:dashboard' %}"
+        >
+            {% translate "View All Doctrines" %}
+        </a>
+    </li>
+{% endblock %}
+
+{% block header_nav_collapse_right %}
+    {# Nothing #}
+{% endblock %}
+
+{% block content %}
+    <div>
+        {% block hrapps_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {% block more_css %}{%endblock%}
+{% endblock extra_css %}
