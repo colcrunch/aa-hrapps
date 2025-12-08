@@ -1,0 +1,57 @@
+<template id="text-field-template">
+    <div class="card bg-secondary" style="margin-bottom: 3px;">
+        <div class="card-header">
+            <div class="card-title mb-0">
+                Text Field
+                <button type="button" class="btn btn-xs btn-danger float-end ms-1" onClick="removeField(this.closest('.card'))">
+                    <span class="fa fa-times"></span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" for="question">Question</label>
+                        <input type="text" class="form-control" id="question">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group" style="display: flex; justify-content: flex-end;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
+                        <label class="form-label" for="required">Required</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="text-area-template">
+    <div class="card bg-secondary" style="margin-bottom: 3px;">
+        <div class="card-header">
+            <div class="card-title mb-0">
+                Text Area (Multi-Line Text)
+                <button type="button" class="btn btn-xs btn-danger float-end ms-1" onClick="removeField(this.closest('.card'))">
+                    <span class="fa fa-times"></span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" for="question">Question</label>
+                        <input type="text" class="form-control" id="question">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group" style="display: flex; justify-content: flex-end;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
+                        <label class="form-label" for="required">Required</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
