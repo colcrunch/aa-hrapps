@@ -1,6 +1,34 @@
 {% extends 'hrapps/base.html' %}
 
+{%  block more_css %}
+    {% include 'hrapps/bundles/coreuifree-css.html' %}
+    {% include 'hrapps/bundles/materialdesignicons-css.html' %}
+
+    <style>
+        span.icon-xl {
+            font-size: 20px;
+        }
+
+        p.form-tool {
+            margin-bottom: 0 !important;
+        }
+
+        div.form-tool {
+            height: 64px;
+            margin-bottom: 2px;
+        }
+
+        .btn-xs {
+                --bs-btn-padding-y: 0.15rem;
+                --bs-btn-padding-x: 0.5rem;
+                --bs-btn-font-size: 0.750rem;
+                --bs-btn-border-radius: 0.15rem;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
+    {% include "hrapps/partials/builder_templates.html" %}
     <div class="row">
         <h3>Form Builder</h3>
     </div>
@@ -30,7 +58,24 @@
                     Field Toolbox
                 </div>
                 <div class="card-body">
-                    <p>Test</p>
+                    <div id="text-field" draggable="true" class="card card-body bg-secondary form-tool">
+                        <p class="form-tool"><span class="mdi mdi-form-textbox icon-xl"></span> Text Box</p>
+                    </div>
+                    <div id="text-area" draggable="true" class="card card-body bg-secondary form-tool">
+                        <p class="form-tool">
+                            <span class="cil-short-text icon-xl" style="vertical-align: text-bottom"></span>
+                            Text Area (Multi-Line Text)
+                        </p>
+                    </div>
+                    <div id="dropdown" draggable="true" class="card card-body bg-secondary form-tool">
+                        <p class="form-tool"><span class="mdi mdi-form-dropdown icon-xl"></span> Dropdown</p>
+                    </div>
+                    <div id="options" draggable="true" class="card card-body bg-secondary form-tool">
+                        <p class="form-tool">
+                            <span class="mdi mdi-format-list-checkbox icon-xl"></span>
+                            Options
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,8 +84,8 @@
                 <div class="card-header">
                     Form Designer
                 </div>
-                <div class="card-body">
-                    <p>Test</p>
+                <div id="designer" class="card-body">
+
                 </div>
             </div>
         </div>
@@ -48,10 +93,55 @@
 {% endblock %}
 
 {% block extra_javascript %}
-    {% include "hrapps/bundles/sortable-js.html" %}
     <script type="text/javascript">
+        let currentId = 0;
 
+        function dragstartHandler (event) {
+            // Determine the template that will be used when the tool is dropped on the designer.
+            const srcId = event.srcElement.id;
+            let templateId = srcId+"-template";
 
+            // Set transfer data to the id of the template that will be cloned.
+            event.dataTransfer.setData("text/plain", templateId);
+        }
+
+        function designerDropHandler (event) {
+            // Increment the question counter.
+            currentId++;
+
+            event.preventDefault();
+            // Get the name of the template to clone
+            const data = event.dataTransfer.getData("text/plain");
+
+            // Select the designer card, and the template
+            const parent = document.getElementById("designer");
+            const template = document.getElementById(data);
+
+            // Clone the template, set the id of the template to be used later if we need to remove the question
+            // and add the template to the designer.
+            const clone = document.importNode(template.content, true)
+            const cardDiv = clone.querySelector(".card");
+            cardDiv.id = `question_${currentId}`
+            parent.append(clone);
+
+        }
+
+        function removeField (elem) {
+            // Remove a question from the designer.
+            elem.remove();
+        }
+
+        const textFieldTool = document.getElementById("text-field");
+        textFieldTool.addEventListener("dragstart", dragstartHandler);
+
+        const textAreaTool = document.getElementById("text-area");
+        textAreaTool.addEventListener("dragstart", dragstartHandler);
+
+        const designer = document.getElementById("designer")
+        designer.addEventListener("dragover", (event) => {
+            event.preventDefault();
+        })
+        designer.addEventListener("drop", designerDropHandler);
     </script>
 {% endblock %}
 
