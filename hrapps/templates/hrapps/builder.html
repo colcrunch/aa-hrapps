@@ -18,6 +18,11 @@
             margin-bottom: 2px;
         }
 
+        .sticky-offset {
+            top: .5rem;
+            position: sticky;
+        }
+
         .btn-xs {
                 --bs-btn-padding-y: 0.15rem;
                 --bs-btn-padding-x: 0.5rem;
@@ -53,7 +58,7 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
+            <div class="card sticky-offset">
                 <div class="card-header">
                     Field Toolbox
                 </div>
@@ -70,10 +75,10 @@
                     <div id="dropdown" draggable="true" class="card card-body bg-secondary form-tool">
                         <p class="form-tool"><span class="mdi mdi-form-dropdown icon-xl"></span> Dropdown</p>
                     </div>
-                    <div id="options" draggable="true" class="card card-body bg-secondary form-tool">
+                    <div id="checkboxes" draggable="true" class="card card-body bg-secondary form-tool">
                         <p class="form-tool">
                             <span class="mdi mdi-format-list-checkbox icon-xl"></span>
-                            Options
+                            Checkboxes
                         </p>
                     </div>
                 </div>
@@ -95,14 +100,21 @@
 {% block extra_javascript %}
     <script type="text/javascript">
         let currentId = 0;
+        let optionId = 0;
 
         function dragstartHandler (event) {
             // Determine the template that will be used when the tool is dropped on the designer.
             const srcId = event.srcElement.id;
-            let templateId = srcId+"-template";
 
-            // Set transfer data to the id of the template that will be cloned.
-            event.dataTransfer.setData("text/plain", templateId);
+            if (srcId.includes("template")) {
+                console.log("We will want to reorder when this happens.")
+            }
+            else {
+                let templateId = srcId + "-template";
+
+                // Set transfer data to the id of the template that will be cloned.
+                event.dataTransfer.setData("text/plain", templateId);
+            }
         }
 
         function designerDropHandler (event) {
@@ -131,11 +143,28 @@
             elem.remove();
         }
 
+        function addOption (elem) {
+            optionId++;
+
+            const template = document.getElementById("list-group-item-template")
+            const listGroupItemClone = document.importNode(template.content, true)
+
+            const listGroup = elem.querySelector("ul")
+            listGroupItemClone.querySelector("li").id = `option_${optionId}`
+            listGroup.append(listGroupItemClone)
+        }
+
         const textFieldTool = document.getElementById("text-field");
         textFieldTool.addEventListener("dragstart", dragstartHandler);
 
         const textAreaTool = document.getElementById("text-area");
         textAreaTool.addEventListener("dragstart", dragstartHandler);
+
+        const dropdownTool = document.getElementById("dropdown");
+        dropdownTool.addEventListener("dragstart", dragstartHandler);
+
+        const checkboxesTool = document.getElementById("checkboxes");
+        checkboxesTool.addEventListener("dragstart", dragstartHandler);
 
         const designer = document.getElementById("designer")
         designer.addEventListener("dragover", (event) => {

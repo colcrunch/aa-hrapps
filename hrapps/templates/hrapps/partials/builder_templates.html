@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="form-group" style="display: flex; justify-content: flex-end;">
                         <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
-                        <label class="form-label" for="required">Required</label>
+                        <label class="form-label" for="required">Required?</label>
                     </div>
                 </div>
             </div>
@@ -48,10 +48,109 @@
                 <div class="row">
                     <div class="form-group" style="display: flex; justify-content: flex-end;">
                         <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
-                        <label class="form-label" for="required">Required</label>
+                        <label class="form-label" for="required">Required?</label>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</template>
+
+<template id="dropdown-template">
+    <div class="card bg-secondary" style="margin-bottom: 3px;">
+        <div class="card-header">
+            <div class="card-title mb-0">
+                Dropdown
+                <button type="button" class="btn btn-xs btn-danger float-end ms-1" onClick="removeField(this.closest('.card'))">
+                    <span class="fa fa-times"></span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" for="question">Question</label>
+                        <input type="text" class="form-control" id="question">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group" style="display: flex; justify-content: flex-end;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
+                        <label class="form-label" for="required">Required?</label>
+                    </div>
+                </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title mb-0">
+                                Options
+                                <button class="btn btn-xs bg-success float-end ms-1" onclick="addOption(this.closest('.card'))">
+                                    <span class="fa fa-plus"></span> Add Option
+                                </button>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush">
+
+                        </ul>
+                        <div class="card-footer">
+                            <span class="fa fa-circle-info"></span> Note: A dropdown must have a minimum of 2 options.
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="checkboxes-template">
+    <div class="card bg-secondary" style="margin-bottom: 3px;">
+        <div class="card-header">
+            <div class="card-title mb-0">
+                Checkboxes
+                <button type="button" class="btn btn-xs btn-danger float-end ms-1" onClick="removeField(this.closest('.card'))">
+                    <span class="fa fa-times"></span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" for="question">Question</label>
+                        <input type="text" class="form-control" id="question">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group" style="display: flex; justify-content: flex-end;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
+                        <label class="form-label" for="required">Required?</label>
+                    </div>
+                </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title mb-0">
+                                Options
+                                <button class="btn btn-xs bg-success float-end ms-1" onclick="addOption(this.closest('.card'))">
+                                    <span class="fa fa-plus"></span> Add Option
+                                </button>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush">
+
+                        </ul>
+                        <div class="card-footer">
+                            <span class="fa fa-circle-info"></span> Note: A checkbox field must have a minimum of 2 options.
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="list-group-item-template">
+    <li class="list-group-item d-flex">
+        <input type="text" class="form-control" id="option">
+        <btn class="btn btn-danger ms-2" title="Delete Option" onclick="removeField(this.closest('.list-group-item'))">
+            <span class="fa fa-trash"></span>
+        </btn>
+    </li>
 </template>
