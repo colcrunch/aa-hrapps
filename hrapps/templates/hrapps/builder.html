@@ -29,6 +29,14 @@
                 --bs-btn-font-size: 0.750rem;
                 --bs-btn-border-radius: 0.15rem;
         }
+
+        .dropzone {
+            border-style: dashed; border-width: thick; height: 40vh; align-items: center; padding-top: 12.5vh
+        }
+
+        .hidden {
+            position: absolute;
+        }
     </style>
 {% endblock %}
 
@@ -90,7 +98,11 @@
                     Form Designer
                 </div>
                 <div id="designer" class="card-body">
-
+                    <div id="dropField" class="visible" style="z-index: -1;">
+                        <div class="card dropzone">
+                            <H1>Drag and Drop Fields Here</H1>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,6 +113,9 @@
     <script type="text/javascript">
         let currentId = 0;
         let optionId = 0;
+
+        const dropfield = document.querySelector("#dropField");
+        const designer = document.getElementById("designer");
 
         function dragstartHandler (event) {
             // Determine the template that will be used when the tool is dropped on the designer.
@@ -134,13 +149,21 @@
             const clone = document.importNode(template.content, true)
             const cardDiv = clone.querySelector(".card");
             cardDiv.id = `question_${currentId}`
+            if (designer.children.length === 1) {
+                dropfield.classList.remove("visible")
+                dropfield.classList.add("invisible", "hidden");
+            }
             parent.append(clone);
-
         }
 
         function removeField (elem) {
             // Remove a question from the designer.
             elem.remove();
+
+            if (designer.children.length === 1) {
+                dropfield.classList.remove("invisible", "hidden");
+                dropfield.classList.add("visible");
+            }
         }
 
         function addOption (elem) {
@@ -166,7 +189,6 @@
         const checkboxesTool = document.getElementById("checkboxes");
         checkboxesTool.addEventListener("dragstart", dragstartHandler);
 
-        const designer = document.getElementById("designer")
         designer.addEventListener("dragover", (event) => {
             event.preventDefault();
         })
