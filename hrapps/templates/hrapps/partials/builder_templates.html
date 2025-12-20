@@ -1,6 +1,6 @@
 <template id="text-field-template">
-    <div class="card bg-secondary" style="margin-bottom: 3px;">
-        <div class="card-header">
+    <div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true">
+        <div class="card-header" id="HEAD">
             <div class="card-title mb-0">
                 Text Field
                 <button type="button" class="btn btn-xs btn-danger float-end ms-1" onClick="removeField(this.closest('.card'))">
@@ -8,9 +8,9 @@
                 </button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="BODY">
             <div class="container-fluid">
-                <div class="row">
+                <div class="row" id="ROW">
                     <div class="form-group">
                         <label class="form-label" for="question">Question</label>
                         <input type="text" class="form-control" id="question">
@@ -28,7 +28,7 @@
 </template>
 
 <template id="text-area-template">
-    <div class="card bg-secondary" style="margin-bottom: 3px;">
+    <div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true">
         <div class="card-header">
             <div class="card-title mb-0">
                 Text Area (Multi-Line Text)
@@ -57,7 +57,7 @@
 </template>
 
 <template id="dropdown-template">
-    <div class="card bg-secondary" style="margin-bottom: 3px;">
+    <div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true">
         <div class="card-header">
             <div class="card-title mb-0">
                 Dropdown
@@ -102,7 +102,7 @@
 </template>
 
 <template id="checkboxes-template">
-    <div class="card bg-secondary" style="margin-bottom: 3px;">
+    <div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true">
         <div class="card-header">
             <div class="card-title mb-0">
                 Checkboxes
