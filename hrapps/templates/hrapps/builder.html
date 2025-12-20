@@ -148,7 +148,11 @@
             const draggedElem = document.getElementById(srcId);
 
             // Get the element that the dragged element is being dropped relative to.
-            const relativeElem = document.elementFromPoint(event.clientX, event.clientY).closest('[id^="question"]');
+            var elem = document.elementFromPoint(event.clientX, event.clientY);
+            if (elem.id === "question"){
+                elem = elem.parentElement;
+            }
+            const relativeElem = elem.closest('[id^="question"]');
 
             // Determine if the dragged element should be placed before or after the relative element.
             const afterOrBefore = positionRelativeElem(event.clientY, event.clientX);
