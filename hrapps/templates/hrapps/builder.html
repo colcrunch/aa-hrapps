@@ -121,8 +121,9 @@
             // Determine the template that will be used when the tool is dropped on the designer.
             const srcId = event.srcElement.id;
 
-            if (srcId.includes("template")) {
-                console.log("We will want to reorder when this happens.")
+            if (srcId.includes("question")) {
+                // Set transfer data to the id of the question that will be reordered.
+                event.dataTransfer.setData("text/reorder", srcId);
             }
             else {
                 let templateId = srcId + "-template";
@@ -133,6 +134,52 @@
         }
 
         function designerDropHandler (event) {
+            if (event.dataTransfer.getData("text/reorder")) {
+                reorderFields(event);
+            }
+            else {
+                addField(event);
+            }
+        }
+
+        function reorderFields(event) {
+            // Get the id of the field being reordered.
+            const srcId = event.dataTransfer.getData("text/reorder");
+            const draggedElem = document.getElementById(srcId);
+
+            // Get the element that the dragged element is being dropped relative to.
+            const relativeElem = document.elementFromPoint(event.clientX, event.clientY).closest('[id^="question"]');
+
+            // Determine if the dragged element should be placed before or after the relative element.
+            const afterOrBefore = positionRelativeElem(event.clientY, event.clientX);
+
+            // Place the dragged element after or before the relative element.
+            if (afterOrBefore === "after") {
+                relativeElem.after(draggedElem);
+            }
+            else {
+                relativeElem.before(draggedElem);
+            }
+        }
+
+        function positionRelativeElem(y, x) {
+            // Get the bounding box of the element at the coordinates provided
+            const elem = document.elementFromPoint(x, y);
+
+            // Get the bounding box of the question element that contains the target element.
+            const box = elem.closest('[id^="question"]').getBoundingClientRect();
+
+            // Determine if the y coordinate of the mouse is above or below the middle of the element.
+            const middleY = box.top + (box.height / 2);
+
+            // Return "before" if dropped on the top half of the target question, and after if on the bottom half.
+            if (middleY > y) {
+                return "before";
+            }
+            return "after";
+        }
+
+        function addField(event) {
             // Increment the question counter.
             currentId++;
 
@@ -149,6 +196,7 @@
             const clone = document.importNode(template.content, true)
             const cardDiv = clone.querySelector(".card");
             cardDiv.id = `question_${currentId}`
+            cardDiv.addEventListener("dragstart", dragstartHandler);
             if (designer.children.length === 1) {
                 dropfield.classList.remove("visible")
                 dropfield.classList.add("invisible", "hidden");
