@@ -1,4 +1,4 @@
-<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true">
+<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true" data-field="dropdown">
         <div class="card-header">
             <div class="card-title mb-0">
                 Dropdown
@@ -13,6 +13,9 @@
                     <div class="form-group">
                         <label class="form-label" for="question">Question</label>
                         <input type="text" class="form-control" id="question" required>
+                        <div class="invalid-feedback">
+                            This field is required. Please click the delete button to remove this field.
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -21,7 +24,7 @@
                         <label class="form-label" for="required">Required?</label>
                     </div>
                 </div>
-                    <div class="card">
+                    <div class="card" id="options_card">
                         <div class="card-header">
                             <div class="card-title mb-0">
                                 Options

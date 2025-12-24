@@ -1,4 +1,4 @@
-<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true">
+<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true" data-field="text-field">
         <div class="card-header" id="HEAD">
             <div class="card-title mb-0">
                 Text Field
@@ -13,6 +13,9 @@
                     <div class="form-group">
                         <label class="form-label" for="question">Question</label>
                         <input type="text" class="form-control" id="question" required>
+                        <div class="invalid-feedback">
+                            This field is required. Please click the delete button to remove this field.
+                        </div>
                     </div>
                 </div>
                 <div class="row">

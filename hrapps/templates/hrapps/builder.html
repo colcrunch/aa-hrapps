@@ -37,6 +37,15 @@
         .hidden {
             position: absolute;
         }
+
+        input.invalid-field {
+            border-color: red;
+        }
+
+        input.invalid-field:focus {
+            border-color: red;
+            box-shadow: 0 0 0 .25rem rgba(255, 0, 0, .25);
+        }
     </style>
 {% endblock %}
 
@@ -54,7 +63,10 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name">Form Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Form Name" required>
+                        <input type="text" class="form-control" id="name" required>
+                        <div class="invalid-feedback">
+                            A form name is required.
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="description">Form Description</label>
@@ -66,30 +78,33 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <div class="card sticky-offset">
-                <div class="card-header">
-                    Field Toolbox
+            <div class="sticky-offset">
+                <div class="card">
+                    <div class="card-header">
+                        Field Toolbox
+                    </div>
+                    <div class="card-body">
+                        <div id="text-field" draggable="true" class="card card-body bg-secondary form-tool">
+                            <p class="form-tool"><span class="mdi mdi-form-textbox icon-xl"></span> Text Box</p>
+                        </div>
+                        <div id="text-area" draggable="true" class="card card-body bg-secondary form-tool">
+                            <p class="form-tool">
+                                <span class="cil-short-text icon-xl" style="vertical-align: text-bottom"></span>
+                                Text Area (Multi-Line Text)
+                            </p>
+                        </div>
+                        <div id="dropdown" draggable="true" class="card card-body bg-secondary form-tool">
+                            <p class="form-tool"><span class="mdi mdi-form-dropdown icon-xl"></span> Dropdown</p>
+                        </div>
+                        <div id="checkboxes" draggable="true" class="card card-body bg-secondary form-tool">
+                            <p class="form-tool">
+                                <span class="mdi mdi-format-list-checkbox icon-xl"></span>
+                                Checkboxes
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div id="text-field" draggable="true" class="card card-body bg-secondary form-tool">
-                        <p class="form-tool"><span class="mdi mdi-form-textbox icon-xl"></span> Text Box</p>
-                    </div>
-                    <div id="text-area" draggable="true" class="card card-body bg-secondary form-tool">
-                        <p class="form-tool">
-                            <span class="cil-short-text icon-xl" style="vertical-align: text-bottom"></span>
-                            Text Area (Multi-Line Text)
-                        </p>
-                    </div>
-                    <div id="dropdown" draggable="true" class="card card-body bg-secondary form-tool">
-                        <p class="form-tool"><span class="mdi mdi-form-dropdown icon-xl"></span> Dropdown</p>
-                    </div>
-                    <div id="checkboxes" draggable="true" class="card card-body bg-secondary form-tool">
-                        <p class="form-tool">
-                            <span class="mdi mdi-format-list-checkbox icon-xl"></span>
-                            Checkboxes
-                        </p>
-                    </div>
-                </div>
+                <button class="btn btn-primary mt-2" onclick="buildFormJson()">Build Form</button>
             </div>
         </div>
         <div class="col-md-8">
@@ -116,6 +131,8 @@
 
         const dropfield = document.querySelector("#dropField");
         const designer = document.getElementById("designer");
+
+        const optionTypes = ["checkboxes", "dropdown"]
 
         function dragstartHandler (event) {
             // Determine the template that will be used when the tool is dropped on the designer.
@@ -149,10 +166,8 @@
 
             // Get the element that the dragged element is being dropped relative to.
             var elem = document.elementFromPoint(event.clientX, event.clientY);
-            if (elem.id === "question"){
-                elem = elem.parentElement;
-            }
-            const relativeElem = elem.closest('[id^="question"]');
+
+            const relativeElem = elem.closest('[id^="question_"]');
 
             // Determine if the dragged element should be placed before or after the relative element.
             const afterOrBefore = positionRelativeElem(event.clientY, event.clientX);
@@ -171,7 +186,7 @@
             const elem = document.elementFromPoint(x, y);
 
             // Get the bounding box of the question element that contains the target element.
-            const box = elem.closest('[id^="question"]').getBoundingClientRect();
+            const box = elem.closest('[id^="question_"]').getBoundingClientRect();
 
             // Determine if the y coordinate of the mouse is above or below the middle of the element.
             const middleY = box.top + (box.height / 2);
@@ -227,6 +242,128 @@
             const listGroup = elem.querySelector("ul")
             listGroupItemClone.querySelector("li").id = `option_${optionId}`
             listGroup.append(listGroupItemClone)
+        }
+
+        function getQuestions() {
+            const questions = [];
+            designer.querySelectorAll("[id^='question_']").forEach(elem => {
+                questions.push(elem);
+            })
+            return questions;
+        }
+
+        function customReportValidity(elem) {
+            const elemValid = elem.checkValidity();
+
+            if (!elemValid) {
+                elem.classList.add("invalid-field");
+                if (elem.parentElement.classList.contains("d-flex")) {
+                    elem = elem.parentElement;
+                }
+                elem.parentElement.querySelector(".invalid-feedback").style.display = "block";
+
+                return false;
+            }
+
+            if (elem.classList.contains("invalid-field")) {
+                elem.classList.remove("invalid-field");
+                if (elem.parentElement.classList.contains("d-flex")) {
+                    elem = elem.parentElement;
+                }
+                elem.parentElement.querySelector(".invalid-feedback").style.display = "none";
+            }
+
+            return true;
+        }
+
+        function validateForm() {
+            let validForm;
+
+            const nameValid = customReportValidity(document.getElementById("name"))
+            const descriptionValid = customReportValidity(document.getElementById("description"));
+
+            validForm = nameValid && descriptionValid;
+
+            const questions = getQuestions();
+
+            if (questions.length === 0) {
+                console.log("A form must have questions");
+                validForm = false;
+            }
+
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const questionType = question.closest("[id^='question_']").getAttribute("data-field");
+
+                const questionField = question.querySelector("[id='question']");
+                const options = question.querySelectorAll("[id='option']");
+                if (!(options.length < 2)) {
+                    for (let i = 0; i < options.length; i++) {
+                        const option = options[i];
+                        const optionValid = customReportValidity(option);
+                        validForm = validForm && optionValid;
+                    }
+                }
+
+                if (optionTypes.includes(questionType) && options.length < 2) {
+                    question.closest("[id^='question_']").querySelector("#options_card").querySelector(".card-footer").style.color = "red";
+
+                    validForm = false;
+                }
+                else {
+                    question.closest("[id^='question_']").querySelector("#options_card").querySelector(".card-footer").style.color = "";
+                }
+
+                const questionValid = customReportValidity(questionField);
+                validForm = validForm && questionValid;
+            }
+
+            console.log(`This form is ${validForm ? "valid" : "invalid"}`)
+            return validForm;
+        }
+
+        function buildFormJson() {
+            let validForm = validateForm();
+
+            if (!validForm) {
+                return;
+            }
+
+            const formJson = {
+                name: document.getElementById("name").value,
+                description: document.getElementById("description").value,
+                questions: []
+            }
+
+            const questions = getQuestions();
+
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const questionField = question.querySelector("[id='question']");
+                const required = question.querySelector("[id='required']").value;
+                const fieldType = question.closest("[id^='question_']").getAttribute("data-field");
+
+                const questionJson = {
+                    type: fieldType,
+                    question: questionField.value,
+                    required: required,
+                }
+
+                if (optionTypes.includes(fieldType)) {
+                    const options = question.querySelectorAll("[id^='option_']");
+                    const optionsList = [];
+                    for (let i = 0; i < options.length; i++) {
+                        const option = options[i];
+                        optionsList.push(option.querySelector("[id='option']").value);
+                    }
+
+                    questionJson.options = optionsList;
+                }
+
+                formJson.questions.push(questionJson);
+            }
+
+            console.log(formJson);
         }
 
         const textFieldTool = document.getElementById("text-field");
