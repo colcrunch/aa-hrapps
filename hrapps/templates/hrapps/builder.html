@@ -310,7 +310,7 @@
 
                     validForm = false;
                 }
-                else {
+                else if (optionTypes.includes(questionType) && options.length >= 2){
                     question.closest("[id^='question_']").querySelector("#options_card").querySelector(".card-footer").style.color = "";
                 }
 
