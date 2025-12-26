@@ -44,7 +44,7 @@ def create_form(request):
         except Exception as e:
             logger.error(e)
             return HttpResponse(status=500)
-        return HttpResponse()
+        return HttpResponse(status=201)
 
     return render(request, "hrapps/builder.html")
 
