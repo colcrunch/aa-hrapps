@@ -12,7 +12,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label class="form-label" for="question">Question</label>
-                        <input type="text" class="form-control" id="question" required>
+                        <input type="text" class="form-control" id="question" value="{{ question_text }}" required>
                         <div class="invalid-feedback">
                             This field is required. Please click the delete button to remove this field.
                         </div>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group" style="display: flex; justify-content: flex-end;">
-                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;" {% if question_required %}checked{% endif %}>
                         <label class="form-label" for="required">Required?</label>
                     </div>
                 </div>
