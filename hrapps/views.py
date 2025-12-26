@@ -46,7 +46,7 @@ def create_form(request):
             return HttpResponse(status=500)
         return HttpResponse(status=201)
 
-    return render(request, "hrapps/builder.html")
+    return render(request, "hrapps/builder.html", {"action": "Create"})
 
 
 def forms_library(request):

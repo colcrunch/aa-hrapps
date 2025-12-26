@@ -108,7 +108,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-2" onclick="submitCreateForm()">Create Form</button>
+                <button class="btn btn-primary mt-2" onclick="submitForm()">{{ action|title }} Form</button>
             </div>
         </div>
         <div class="col-md-8">
@@ -117,7 +117,7 @@
                     Form Designer
                 </div>
                 <div id="designer" class="card-body">
-                    <div id="dropField" class="{% if "edit" in request.path|lower %}invisible hidden {% else %}visible {% endif %}" style="z-index: -1;">
+                    <div id="dropField" class="{% if action|lower == "edit" %}invisible hidden {% else %}visible {% endif %}" style="z-index: -1;">
                         <div class="card dropzone">
                             <H1>Drag and Drop Fields Here</H1>
                         </div>
@@ -372,7 +372,7 @@
             return formJson;
         }
 
-        function submitCreateForm() {
+        function submitForm() {
             const formJson = buildFormJson();
 
             if ("error" in formJson) {
@@ -382,7 +382,7 @@
 
 
             console.log(JSON.stringify(formJson))
-            fetch("{% url "hrapps:create_form" %}", {
+            fetch("{% if action|lower == "create" %}{% url "hrapps:create_form" %}{% elif action|lower == "edit"  %}{% url "hrapps:edit_form" %}{% endif %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
