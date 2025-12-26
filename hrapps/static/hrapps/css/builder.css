@@ -1,0 +1,41 @@
+span.icon-xl {
+    font-size: 20px;
+}
+
+p.form-tool {
+    margin-bottom: 0 !important;
+}
+
+div.form-tool {
+    height: 64px;
+    margin-bottom: 2px;
+}
+
+.sticky-offset {
+    top: .5rem;
+    position: sticky;
+}
+
+.btn-xs {
+        --bs-btn-padding-y: 0.15rem;
+        --bs-btn-padding-x: 0.5rem;
+        --bs-btn-font-size: 0.750rem;
+        --bs-btn-border-radius: 0.15rem;
+}
+
+.dropzone {
+    border-style: dashed; border-width: thick; height: 40vh; align-items: center; padding-top: 12.5vh
+}
+
+.hidden {
+    position: absolute;
+}
+
+input.invalid-field {
+    border-color: red;
+}
+
+input.invalid-field:focus {
+    border-color: red;
+    box-shadow: 0 0 0 .25rem rgba(255, 0, 0, .25);
+}
