@@ -14,6 +14,13 @@
             {% translate "Create Form" %}
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {% navactive request 'hrapps:forms_library' %}"
+           href="{% url 'hrapps:forms_library' %}"
+        >
+            {% translate "Forms Library" %}
+        </a>
+    </li>
 {% endblock %}
 
 {% block header_nav_collapse_right %}
