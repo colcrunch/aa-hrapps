@@ -63,14 +63,18 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name">Form Name</label>
-                        <input type="text" class="form-control" id="name" required>
+                        <input type="text" class="form-control" id="name" value="{{ form_name }}" required>
                         <div class="invalid-feedback">
                             A form name is required.
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="description">Form Description</label>
-                        <textarea class="form-control" id="description" rows="3"></textarea>
+                        <textarea class="form-control" id="description" rows="3">{{ form_description }}</textarea>
+                    </div>
+                    <div class="form-group" style="display: flex; justify-content: flex-end;">
+                        <input type="checkbox" class="form-check-input" id="active" style="margin-right: 3px;" {% if active %} checked {% endif %}>
+                        <label for="active">Active</label>
                     </div>
                 </div>
             </div>
@@ -104,7 +108,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-2" onclick="buildFormJson()">Build Form</button>
+                <button class="btn btn-primary mt-2" onclick="submitCreateForm()">Create Form</button>
             </div>
         </div>
         <div class="col-md-8">
@@ -113,7 +117,7 @@
                     Form Designer
                 </div>
                 <div id="designer" class="card-body">
-                    <div id="dropField" class="visible" style="z-index: -1;">
+                    <div id="dropField" class="{% if "edit" in request.path|lower %}invisible hidden {% else %}visible {% endif %}" style="z-index: -1;">
                         <div class="card dropzone">
                             <H1>Drag and Drop Fields Here</H1>
                         </div>
@@ -281,8 +285,9 @@
 
             const nameValid = customReportValidity(document.getElementById("name"))
             const descriptionValid = customReportValidity(document.getElementById("description"));
+            const activeValid = customReportValidity(document.getElementById("active"))
 
-            validForm = nameValid && descriptionValid;
+            validForm = nameValid && descriptionValid && activeValid;
 
             const questions = getQuestions();
 
@@ -326,12 +331,13 @@
             let validForm = validateForm();
 
             if (!validForm) {
-                return;
+                return {error: "Form invalid."};
             }
 
             const formJson = {
                 name: document.getElementById("name").value,
                 description: document.getElementById("description").value,
+                active: document.getElementById("active").checked,
                 questions: []
             }
 
@@ -340,7 +346,7 @@
             for (let i = 0; i < questions.length; i++) {
                 const question = questions[i];
                 const questionField = question.querySelector("[id='question']");
-                const required = question.querySelector("[id='required']").value;
+                const required = question.querySelector("[id='required']").checked;
                 const fieldType = question.closest("[id^='question_']").getAttribute("data-field");
 
                 const questionJson = {
@@ -363,7 +369,33 @@
                 formJson.questions.push(questionJson);
             }
 
-            console.log(formJson);
+            return formJson;
+        }
+
+        function submitCreateForm() {
+            const formJson = buildFormJson();
+
+            if ("error" in formJson) {
+                console.log(`Unable to submit form: ${formJson.error}`)
+                return;
+            }
+
+
+            console.log(JSON.stringify(formJson))
+            fetch("{% url "hrapps:create_form" %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify(formJson)
+            })
+            .then(response => {
+                console.log(`Create Response Status: ${response.status}`)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         }
 
         const textFieldTool = document.getElementById("text-field");
