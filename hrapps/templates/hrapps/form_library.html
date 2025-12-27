@@ -1,0 +1,74 @@
+{% extends "hrapps/base.html" %}
+
+{% load evelinks %}
+{% load i18n %}
+
+{% block hr_title %}Forms Library{% endblock %}
+
+{% block extra_css %}
+    {% include "bundles/datatables-css-bs5.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            Forms Library
+        </div>
+        <div class="card-body">
+            {% if not forms %}
+                <div class="alert alert-warning text-center" role="alert">{% translate "No Forms Found" %}</div>
+            {% else %}
+                <table class="table table-striped table-hover" id="forms_table">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Form Name" %}</th>
+                            <th>{% translate "Description" %}</th>
+                            <th>{% translate "Created" %}</th>
+                            <th>{% translate "Updated" %}</th>
+                            <th>{% translate "Active" %}</th>
+                            <th>{% translate "Corporation" %}</th>
+                            <th>{% translate "Utilities" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in forms %}
+                            <tr>
+                                <td>{{ form.name }}</td>
+                                <td>{{ form.description }}</td>
+                                <td>{{ form.created }}</td>
+                                <td>{% if updated %}{{ form.updated }}{% else %}-{% endif %}</td>
+                                <td>
+                                    {% if form.active %}
+                                        <span class="fa fa-check-circle" style="color: var(--bs-success)"></span>
+                                    {% else %}
+                                        <span class="fa fa-times-circle" style="color: var(--bs-danger)"></span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <img src="{{ form.corporation|corporation_logo_url:64 }}"
+                                         alt="{{ form.corporation.corporation_name }} Logo">
+                                    {{ form.corporation.corporation_name }}
+                                </td>
+                                <td>Coming Soon</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_javascript %}
+    {% include "bundles/datatables-js-bs5.html" %}
+
+    {% get_datatables_language_static LANGUAGE_CODE as DT_LANG_PATH %}
+
+    <script>
+        $(document).ready(function () {
+            $('#forms_table').DataTable({
+                language: {url: '{{ DT_LANG_PATH }}'}
+            });
+        })
+    </script>
+{% endblock %}

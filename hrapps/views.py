@@ -50,4 +50,6 @@ def create_form(request):
 
 
 def forms_library(request):
-    return render(request, "hrapps/builder.html")
+    forms = Form.objects.all()
+    ctx = {"forms": forms}
+    return render(request, "hrapps/form_library.html", ctx)
