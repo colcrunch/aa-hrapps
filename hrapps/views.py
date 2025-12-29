@@ -1,7 +1,5 @@
 import json
-from dataclasses import fields
 
-from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render
 from allianceauth.services.hooks import get_extension_logger
