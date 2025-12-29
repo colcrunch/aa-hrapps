@@ -1,4 +1,4 @@
-<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true" data-field="text-field">
+<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true" data-field="text-field" {% if id %}id="question_{{ id }}"{% endif %}>
         <div class="card-header" id="HEAD">
             <div class="card-title mb-0">
                 Text Field
@@ -12,7 +12,7 @@
                 <div class="row" id="ROW">
                     <div class="form-group">
                         <label class="form-label" for="question">Question</label>
-                        <input type="text" class="form-control" id="question" value="{{ question_text }}" required>
+                        <input type="text" class="form-control" id="question" value="{{ field.question }}" required>
                         <div class="invalid-feedback">
                             This field is required. Please click the delete button to remove this field.
                         </div>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group" style="display: flex; justify-content: flex-end;">
-                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;" {% if field.required %}checked{% endif %}>
                         <label class="form-label" for="required">Required?</label>
                     </div>
                 </div>

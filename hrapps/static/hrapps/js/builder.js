@@ -258,7 +258,7 @@ function submitForm(csrf_token) {
         body: JSON.stringify(formJson)
     })
     .then(response => {
-        console.log(`Create Response Status: ${response.status}`)
+        console.log(`Response Status: ${response.status}`)
     })
     .catch((error) => {
         console.log(error)

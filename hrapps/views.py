@@ -1,4 +1,5 @@
 import json
+from dataclasses import fields
 
 from django.db import IntegrityError
 from django.http import HttpResponse
@@ -18,6 +19,16 @@ def get_or_create_corp(corporation_id):
         corp = EveCorporationInfo.objects.get(corporation_id=corporation_id)
     return corp
 
+
+class Field:
+    def __init__(self, type, question, options=None, required=False):
+        self.type = type
+        self.question = question
+        self.required = required
+        if options is not None:
+            self.options = tuple(options)
+        else:
+            self.options = None
 
 
 # Create your views here.
@@ -47,6 +58,33 @@ def create_form(request):
         return HttpResponse(status=201)
 
     return render(request, "hrapps/builder.html", {"action": "Create"})
+
+
+def edit_form(request, form_id):
+    form = Form.objects.get(id=form_id)
+    if request.method == "POST":
+        body = request.body.decode("utf-8")
+        logger.debug(body)
+        body_json = json.loads(body)
+
+        form.name = body_json["name"]
+        form.description = body_json["description"]
+        form.active = body_json["active"]
+        form.fields = body_json["questions"]
+        try:
+            form.save()
+        except Exception as e:
+            logger.error(e)
+            return HttpResponse(status=500)
+        return HttpResponse(status=200)
+    fields = []
+
+    for field in form.fields:
+        field = Field(**field)
+        fields.append(field)
+
+    fields = tuple(fields)
+    return render(request, "hrapps/builder.html", {"action": "Edit", "form": form, "fields": fields})
 
 
 def forms_library(request):

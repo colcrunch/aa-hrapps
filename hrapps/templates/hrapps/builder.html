@@ -22,14 +22,14 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name">Form Name</label>
-                        <input type="text" class="form-control" id="name" value="{{ form_name }}" required>
+                        <input type="text" class="form-control" id="name" value="{{ form.name }}" required>
                         <div class="invalid-feedback">
                             A form name is required.
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="description">Form Description</label>
-                        <textarea class="form-control" id="description" rows="3">{{ form_description }}</textarea>
+                        <textarea class="form-control" id="description" rows="3">{{ form.description }}</textarea>
                     </div>
                     <div class="form-group" style="display: flex; justify-content: flex-end;">
                         <input type="checkbox" class="form-check-input" id="active" style="margin-right: 3px;" {% if active %} checked {% endif %}>
@@ -81,6 +81,13 @@
                             <H1>Drag and Drop Fields Here</H1>
                         </div>
                     </div>
+                {% if action|lower == "edit" %}
+                    {% for field in fields %}
+                        {% with "hrapps/partials/fields/"|add:field.type|add:".html" as field_partial %}
+                            {% include field_partial with field=field id=forloop.counter %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
                 </div>
             </div>
         </div>
