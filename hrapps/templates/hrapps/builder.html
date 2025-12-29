@@ -97,6 +97,14 @@
 {% block extra_javascript %}
     {% include "hrapps/bundles/builder-js.html" %}
     <script type="text/javascript">
+        {% if action|lower == "edit" %}
+            const qs = getQuestions();
+
+            for (let i = 0; i < qs.length; i++) {
+                qs[i].addEventListener("dragstart", dragstartHandler);
+            }
+        {% endif %}
+
         const textFieldTool = document.getElementById("text-field");
         textFieldTool.addEventListener("dragstart", dragstartHandler);
 
