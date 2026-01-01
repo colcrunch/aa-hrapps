@@ -1,7 +1,9 @@
 import json
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
 from .models import Form
@@ -84,6 +86,23 @@ def edit_form(request, form_id):
     fields = tuple(fields)
     return render(request, "hrapps/builder.html", {"action": "Edit", "form": form, "fields": fields})
 
+
+def delete_form(request, form_id):
+    sender = request.META.get("HTTP_REFERER", "/")
+
+    try:
+        form = Form.objects.get(id=form_id)
+        if request.user.profile.main_character.corporation_id == form.corporation.corporation_id \
+                or request.user.is_superuser:
+            form.delete()
+
+            messages.success(request, "Form deleted successfully.")
+        else:
+            messages.error(request, "You do not have permission to delete this form.")
+    except Exception as e:
+        logger.error(e)
+        messages.error(request, "Error deleting form.")
+    return redirect(sender)
 
 def forms_library(request):
     forms = Form.objects.all()
