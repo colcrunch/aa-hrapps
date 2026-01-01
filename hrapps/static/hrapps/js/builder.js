@@ -259,8 +259,39 @@ function submitForm(csrf_token) {
     })
     .then(response => {
         console.log(`Response Status: ${response.status}`)
+        if (response.ok){
+            successNotification();
+        }
     })
     .catch((error) => {
         console.log(error)
     })
+}
+
+function successNotification() {
+    const successMessageP = document.getElementById("success-message");
+    const countdownP = document.getElementById("countdown");
+
+    if (window.location.href.includes("edit")) {
+        successMessageP.innerHTML = "Form updated successfully!";
+    }
+    else {
+        successMessageP.innerHTML = "Form created successfully!";
+    }
+
+    const successModal = document.getElementById("success-modal");
+    const modal = new bootstrap.Modal(successModal);
+    modal.show()
+
+    let timeLeft = 11;
+
+    const timer = setInterval(() => {
+        countdownP.innerHTML = timeLeft - 1;
+        timeLeft--;
+        if (timeLeft === 0) {
+            clearInterval(timer);
+
+            window.location.href = "/hrapps/";
+        }
+    }, 1000);
 }
