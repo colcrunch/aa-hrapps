@@ -106,17 +106,12 @@
             }
         {% endif %}
 
-        const textFieldTool = document.getElementById("text-field");
-        textFieldTool.addEventListener("dragstart", dragstartHandler);
+        const fieldTools = document.querySelectorAll("div.form-tool");
 
-        const textAreaTool = document.getElementById("text-area");
-        textAreaTool.addEventListener("dragstart", dragstartHandler);
-
-        const dropdownTool = document.getElementById("dropdown");
-        dropdownTool.addEventListener("dragstart", dragstartHandler);
-
-        const checkboxesTool = document.getElementById("checkboxes");
-        checkboxesTool.addEventListener("dragstart", dragstartHandler);
+        for (let i = 0; i < fieldTools.length; i++) {
+            fieldTools[i].addEventListener("dragstart", dragstartHandler);
+            fieldTools[i].addEventListener("dblclick", dblclickHandler);
+        }
 
         designer.addEventListener("dragover", (event) => {
             event.preventDefault();

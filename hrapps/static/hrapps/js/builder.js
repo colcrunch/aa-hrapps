@@ -31,6 +31,14 @@ function designerDropHandler (event) {
     }
 }
 
+function dblclickHandler (event) {
+    const srcId = event.target.closest("div.form-tool").id;
+
+    let templateId = srcId + "-template";
+
+    addField(event, templateId);
+}
+
 function reorderFields(event) {
     // Get the id of the field being reordered.
     const srcId = event.dataTransfer.getData("text/reorder");
@@ -70,13 +78,13 @@ function positionRelativeElem(y, x) {
     return "after";
 }
 
-function addField(event) {
+function addField(event, templateId = null) {
     // Increment the question counter.
     currentId++;
 
     event.preventDefault();
     // Get the name of the template to clone
-    const data = event.dataTransfer.getData("text/plain");
+    const data = event instanceof DragEvent ? event.dataTransfer.getData("text/plain") : templateId;
 
     // Select the designer card, and the template
     const parent = document.getElementById("designer");
