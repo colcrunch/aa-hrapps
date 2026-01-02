@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include "hrapps/partials/delete_confirm_modal.html" %}
     <div class="card">
         <div class="card-header">
             Forms Library
@@ -53,9 +54,13 @@
                                     <a href="{% url 'hrapps:edit_form' form.id %}" class="btn btn-sm btn-warning">
                                         <span class="fa fa-edit"></span>
                                     </a>
-                                    <a href="{% url 'hrapps:delete_form' form.id %}" class="btn btn-sm btn-danger">
+                                    <button
+                                            data-delete-url="{% url 'hrapps:delete_form' form.id %}"
+                                            class="btn btn-sm btn-danger"
+                                            onClick="showDeleteConfirmModal(this)"
+                                    >
                                         <span class="fa fa-times"></span>
-                                    </a>
+                                    </button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -77,5 +82,14 @@
                 language: {url: '{{ DT_LANG_PATH }}'}
             });
         })
+
+        function showDeleteConfirmModal(elem) {
+            const deleteUrl = elem.dataset.deleteUrl;
+            const deleteModal = document.getElementById("delete-modal");
+            const deleteBtn = document.getElementById("delete-btn");
+            deleteBtn.href = deleteUrl;
+            const modal = new bootstrap.Modal(deleteModal);
+            modal.show();
+        }
     </script>
 {% endblock %}
