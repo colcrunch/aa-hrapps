@@ -187,12 +187,16 @@ function validateForm() {
         }
 
         if (optionTypes.includes(questionType) && options.length < 2) {
-            question.closest("[id^='question_']").querySelector("#options_card").querySelector(".card-footer").style.color = "red";
+            question.closest("[id^='question_']")
+                .querySelector("#options_card")
+                .querySelector(".card-footer").style.color = "red";
 
             validForm = false;
         }
         else if (optionTypes.includes(questionType) && options.length >= 2){
-            question.closest("[id^='question_']").querySelector("#options_card").querySelector(".card-footer").style.color = "";
+            question.closest("[id^='question_']")
+                .querySelector("#options_card")
+                .querySelector(".card-footer").style.color = "";
         }
 
         const questionValid = customReportValidity(questionField);
