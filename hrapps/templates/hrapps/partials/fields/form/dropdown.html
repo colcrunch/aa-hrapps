@@ -1,0 +1,8 @@
+<div class="form-field">
+    <label for="question_{{ id }}" class="h5">{{ field.question }} {% if field.required %}<span style="color: red">*</span>{% endif %}</label>
+    <select class="form-select" id="question_{{ id }}" {% if field.required %} required {% endif %}>
+        {% for option in field.options %}
+            <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+    </select>
+</div>

@@ -1,0 +1,4 @@
+<div class="form-field">
+    <label for="question_{{ id }}" class="h5">{{ field.question }} {% if form.required %}<span style="color: red">*</span> {% endif %}</label>
+    <textarea class="form-control" id="question_{{ id }}" rows="3" {% if field.required %} required {% endif %} {% if disabled %} disabled {% endif %}></textarea>
+</div>

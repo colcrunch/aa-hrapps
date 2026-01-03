@@ -1,0 +1,15 @@
+<div class="form-field checkbox-field" data-required="{{ field.required }}">
+    <h5>{{ field.question }} {% if field.required %}<span style="color: red">*</span>{% endif %}</h5>
+    {% for option in field.options %}
+        <div class="form-check">
+            <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="{{ option }}"
+                    id="question_{{ id }}_option_{{ forloop.counter }}"
+                    {% if disabled %} disabled {% endif %}
+            >
+            <label class="form-check-label" for="question_{{ id }}_option_{{ forloop.counter }}">{{ option }}</label>
+        </div>
+    {% endfor %}
+</div>

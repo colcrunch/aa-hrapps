@@ -10,4 +10,5 @@ urlpatterns = [
     re_path(r"^form/library/$", views.forms_library, name="forms_library"),
     re_path(r"^form/(?P<form_id>\d+)/edit/$", views.edit_form, name="edit_form"),
     re_path(r"^form/(?P<form_id>\d+)/delete/$", views.delete_form, name="delete_form"),
+    re_path(r"^form/(?P<form_id>\d+)/$", views.view_form, name="view_form"),
 ]

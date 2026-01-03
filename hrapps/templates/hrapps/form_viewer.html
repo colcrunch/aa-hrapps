@@ -1,0 +1,58 @@
+{% extends "hrapps/base.html" %}
+
+{% load i18n %}
+{% load evelinks %}
+
+{% block hrapps_content %}
+<div class="row">
+    <h3>{{ form.name }}</h3>
+    <h4><img src="{{ form.corporation|corporation_logo_url:32 }}" alt="{{ form.corporation.corporation_name }} Logo"> <small class="text-body-secondary">{{ form.corporation.corporation_name }}</small></h4>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">{%  translate "Form Details" %}</div>
+            <div class="card-body">
+                <dl>
+                    <dt>{% translate "Form Description" %}</dt>
+                    <dd>{{ form.description }}</dd>
+                </dl>
+                <dl>
+                    <dt>{% translate "Created" %}</dt>
+                    <dd>
+                        {% if LANGUAGE_CODE == 'ko' or LANGUAGE_CODE == 'ja' %}
+                            {{ form.created|date:'Y-m-d / H:i:s' }}
+                        {% else %}
+                            {{ form.created|date:'d M Y H:i:s' }}
+                        {% endif %}
+                    </dd>
+                </dl>
+                {% if form.updated %}
+                    <dl>
+                        <dt>{% translate "Updated" %}</dt>
+                        <dd>
+                            {% if LANGUAGE_CODE == 'ko' or LANGUAGE_CODE == 'ja' %}
+                                {{ form.updated|date:'Y-m-d / H:i:s' }}
+                            {% else %}
+                                {{ form.updated|date:'d M Y H:i:s' }}
+                            {% endif %}
+                        </dd>
+                    </dl>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">{% translate "Form Preview" %}</div>
+            <div class="card-body">
+                {% for field in fields %}
+                    {% with "hrapps/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
+                        {% include field_partial with field=field disabled=True id=forloop.counter %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

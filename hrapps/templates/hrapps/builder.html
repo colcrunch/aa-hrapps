@@ -84,7 +84,7 @@
                     </div>
                 {% if action|lower == "edit" %}
                     {% for field in fields %}
-                        {% with "hrapps/partials/fields/"|add:field.type|add:".html" as field_partial %}
+                        {% with "hrapps/partials/fields/builder/"|add:field.type|add:".html" as field_partial %}
                             {% include field_partial with field=field id=forloop.counter %}
                         {% endwith %}
                     {% endfor %}

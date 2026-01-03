@@ -104,6 +104,20 @@ def delete_form(request, form_id):
         messages.error(request, "Error deleting form.")
     return redirect(sender)
 
+
+def view_form(request, form_id):
+    form = Form.objects.get(id=form_id)
+
+    fields = []
+
+    for field in form.fields:
+        field = Field(**field)
+        fields.append(field)
+
+    fields = tuple(fields)
+    return render(request, "hrapps/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
+
+
 def forms_library(request):
     forms = Form.objects.all()
     ctx = {"forms": forms}
