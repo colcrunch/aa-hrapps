@@ -1,3 +1,4 @@
+import copy
 import json
 
 from django.http import HttpResponse
@@ -116,6 +117,21 @@ def view_form(request, form_id):
 
     fields = tuple(fields)
     return render(request, "hrapps/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
+
+
+def copy_form(request, form_id):
+    form = Form.objects.get(id=form_id)
+
+    copied_form = copy.deepcopy(form)
+    copied_form.pk = None
+    copied_form.active = False
+    if copied_form.corporation.corporation_id == request.user.profile.main_character.corporation_id:
+        copied_form.name = f"{copied_form.name} (Copy)"
+    else:
+        copied_form.corporation__corporation_id = request.user.profile.main_character.corporation_id
+    copied_form.save()
+
+    return redirect("hrapps:edit_form", form_id=copied_form.pk)
 
 
 def forms_library(request):
