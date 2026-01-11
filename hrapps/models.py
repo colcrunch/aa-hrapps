@@ -33,6 +33,7 @@ class Form(models.Model):
 class FormResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     form = models.ForeignKey(Form, on_delete=models.DO_NOTHING, related_name="responses")
+    created = models.DateTimeField(auto_now_add=True)
     response = models.JSONField()
 
     class Meta:
