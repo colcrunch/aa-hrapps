@@ -4,6 +4,10 @@
 {% load i18n %}
 {% load evelinks %}
 
+{% block more_css %}
+    {% include 'hrapps/bundles/builder-css.html' %}
+{% endblock %}
+
 {% block hrapps_content %}
 <div class="row">
     <h3>{{ form.name }}</h3>
