@@ -43,6 +43,7 @@ class Form(models.Model):
             models.UniqueConstraint(fields=["corporation", "name"], name="unique_form_name_per_corp")
         ]
 
+
 class FormResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     form = models.ForeignKey(Form, on_delete=models.DO_NOTHING, related_name="responses")
@@ -56,6 +57,7 @@ class FormResponse(models.Model):
             ("create_response", "Can create responses."),
             ("view_corp_responses", "Can view corp responses."),
         )
+
 
 class ResponseComment(models.Model):
     response = models.ForeignKey(FormResponse, on_delete=models.CASCADE, related_name="comments")
