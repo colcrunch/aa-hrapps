@@ -11,6 +11,7 @@
 {% block hrapps_content %}
     {% include "hrapps/partials/builder_templates.html" %}
     {% include "hrapps/partials/builder_success_modal.html" %}
+    {% include "hrapps/partials/activate_confirm_modal.html" %}
     <div class="row">
         <h3>Form Builder</h3>
     </div>
@@ -68,7 +69,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-2" onclick="submitForm('{{ csrf_token }}')">{{ action|title }} Form</button>
+                <button class="btn btn-primary mt-2" onclick="submitForm('{{ csrf_token }}', {{ has_active|lower }})">{{ action|title }} Form</button>
             </div>
         </div>
         <div class="col-md-8">

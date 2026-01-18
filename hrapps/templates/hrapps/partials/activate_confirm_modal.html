@@ -1,0 +1,33 @@
+<div class="modal fade" id="activate-modal" tabindex="-1" role="dialog" aria-labelledby="activateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h6 class="modal-title" id="activateModalLabel">Activate Form</h6>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to activate this form?</p>
+                {% if has_active %}
+                    <p>If you activate this form, the currently active form will be deactivated.</p>
+
+                    <p>The form currently active for your corp is: <b>{{ active_form_title }}</b></p>
+                {% endif %}
+                <div class="text-center">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                            id="cancel-button">
+                        Cancel
+                    </button>
+                    <button
+                            type="button"
+                            class="btn btn-info"
+                            data-bs-dismiss="modal"
+                            id="activate-button">
+                        Activate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

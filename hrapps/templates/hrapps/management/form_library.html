@@ -51,8 +51,14 @@
                                     {{ form.corporation.corporation_name }}
                                 </td>
                                 <td>
+                                    <a href="{% url 'hrapps:view_form' form.id %}" class="btn btn-sm btn-info">
+                                        <span class="fa fa-eye"></span>
+                                    </a>
                                     <a href="{% url 'hrapps:edit_form' form.id %}" class="btn btn-sm btn-warning">
                                         <span class="fa fa-edit"></span>
+                                    </a>
+                                    <a href="{% url 'hrapps:copy_form' form.id %}" class="btn btn-sm btn-secondary">
+                                        <span class="fa fa-copy"></span>
                                     </a>
                                     <button
                                             data-delete-url="{% url 'hrapps:delete_form' form.id %}"
@@ -61,9 +67,6 @@
                                     >
                                         <span class="fa fa-times"></span>
                                     </button>
-                                    <a href="{% url 'hrapps:view_form' form.id %}" class="btn btn-sm btn-info">
-                                        <span class="fa fa-eye"></span>
-                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}

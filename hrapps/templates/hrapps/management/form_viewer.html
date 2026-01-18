@@ -1,4 +1,5 @@
 {% extends "hrapps/base.html" %}
+{% include "hrapps/delete_confirm_modal.html" %}
 
 {% load i18n %}
 {% load evelinks %}
@@ -11,7 +12,23 @@
 <div class="row">
     <div class="col-md-3">
         <div class="card">
-            <div class="card-header">{%  translate "Form Details" %}</div>
+            <div class="card-header">
+                {%  translate "Form Details" %}
+                <div class="float-end">
+                    <a href="{% url 'hrapps:edit_form' form.id %}" class="btn btn-xs btn-primary">
+                        <span class="fa fa-edit"></span>
+                    </a>
+                    <a href="{% url 'hrapps:copy_form' form.id %}" class="btn btn-xs btn-dark">
+                        <span class="fa fa-copy"></span>
+                    </a>
+                    <button
+                            data-delete-url="{% url 'hrapps:delete_form' form.id %}"
+                            class="btn btn-xs btn-danger"
+                            onClick="showDeleteConfirmModal(this)">
+                        <span class="fa fa-times"></span>
+                    </button>
+                </div>
+            </div>
             <div class="card-body">
                 <dl>
                     <dt>{% translate "Form Description" %}</dt>
@@ -47,12 +64,30 @@
             <div class="card-header">{% translate "Form Preview" %}</div>
             <div class="card-body">
                 {% for field in fields %}
-                    {% with "hrapps/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
-                        {% include field_partial with field=field disabled=True id=forloop.counter %}
-                    {% endwith %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            {% with "hrapps/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
+                                {% include field_partial with field=field disabled=True id=forloop.counter %}
+                            {% endwith %}
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_javascript %}
+
+    <script>
+        function showDeleteConfirmModal(elem) {
+            const deleteUrl = elem.dataset.deleteUrl;
+            const deleteModal = document.getElementById("delete-modal");
+            const deleteBtn = document.getElementById("delete-btn");
+            deleteBtn.href = deleteUrl;
+            const modal = new bootstrap.Modal(deleteModal);
+            modal.show();
+        }
+    </script>
 {% endblock %}

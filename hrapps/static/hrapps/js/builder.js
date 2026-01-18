@@ -252,12 +252,38 @@ function buildFormJson() {
     return formJson;
 }
 
-function submitForm(csrf_token) {
+function confirmActivateForm() {
+    const activate_button = document.getElementById("activate-button");
+    const cancel_button = document.getElementById("cancel-button");
+
+    const activateModal = document.getElementById("activate-modal");
+    const modal = new bootstrap.Modal(activateModal);
+    modal.show();
+
+    return new Promise(resolve => {
+        const activateListener = (event) => {
+            let clicked_id = event.target.id;
+            activate_button.removeEventListener("click", activateListener);
+            cancel_button.removeEventListener("click", activateListener);
+            resolve(clicked_id === "activate-button");
+        }
+        activate_button.addEventListener("click", activateListener);
+        cancel_button.addEventListener("click", activateListener)
+    })
+}
+
+async function submitForm(csrf_token, has_active) {
     const formJson = buildFormJson();
 
     if ("error" in formJson) {
         console.log(`Unable to submit form: ${formJson.error}`)
         return;
+    }
+    if (has_active && formJson.active) {
+        let confirmed = await confirmActivateForm();
+        if (!confirmed) {
+            return;
+        }
     }
 
     console.log(JSON.stringify(formJson))

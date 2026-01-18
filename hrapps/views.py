@@ -34,7 +34,7 @@ class Field:
 
 # Create your views here.
 def dashboard(request):
-    return render(request, "hrapps/dashboard.html")
+    return render(request, "hrapps/management/dashboard.html")
 
 
 def create_form(request):
@@ -58,7 +58,15 @@ def create_form(request):
             return HttpResponse(status=500)
         return HttpResponse(status=201)
 
-    return render(request, "hrapps/builder.html", {"action": "Create"})
+    active_form_title = None
+    corp_has_active_form = Form.objects.filter(corporation__corporation_id=request.user.profile.main_character.corporation_id, active=True).exists()
+    if corp_has_active_form:
+        active_form_title = Form.objects.get(corporation__corporation_id=request.user.profile.main_character.corporation_id, active=True).name
+
+    return render(request, "hrapps/management/builder.html",
+                  {"action": "Create",
+                   "has_active": corp_has_active_form,
+                   "active_form_title": active_form_title})
 
 
 def edit_form(request, form_id):
@@ -84,8 +92,22 @@ def edit_form(request, form_id):
         field = Field(**field)
         fields.append(field)
 
+    active_form_title = None
+    corp_has_active_form = Form.objects.filter(
+        corporation__corporation_id=request.user.profile.main_character.corporation_id, active=True).exists()
+    if corp_has_active_form:
+        active_form_title = Form.objects.get(
+            corporation__corporation_id=request.user.profile.main_character.corporation_id, active=True).name
+
     fields = tuple(fields)
-    return render(request, "hrapps/builder.html", {"action": "Edit", "form": form, "fields": fields})
+    return render(request, "hrapps/management/builder.html",
+                  {
+                      "action": "Edit",
+                      "form": form,
+                      "fields": fields,
+                      "has_active": corp_has_active_form,
+                      "active_form_title": active_form_title,
+                  })
 
 
 def delete_form(request, form_id):
@@ -116,7 +138,7 @@ def view_form(request, form_id):
         fields.append(field)
 
     fields = tuple(fields)
-    return render(request, "hrapps/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
+    return render(request, "hrapps/management/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
 
 
 def copy_form(request, form_id):
@@ -137,4 +159,4 @@ def copy_form(request, form_id):
 def forms_library(request):
     forms = Form.objects.all()
     ctx = {"forms": forms}
-    return render(request, "hrapps/form_library.html", ctx)
+    return render(request, "hrapps/management/form_library.html", ctx)
