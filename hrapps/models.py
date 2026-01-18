@@ -29,6 +29,10 @@ class Form(models.Model):
             ("create_forms", "Can create forms."),
             ("manage_corp_forms", "Can manage corp forms."),
         )
+        constraints = [
+            models.UniqueConstraint(fields=["corporation", "active"], name="only_one_active_form_per_corp"),
+            models.UniqueConstraint(fields=["corporation", "name"], name="unique_form_name_per_corp")
+        ]
 
 class FormResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
