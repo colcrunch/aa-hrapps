@@ -22,6 +22,11 @@ class Form(models.Model):
     updated = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
+    def save(self, *args, **kwargs):
+        if self.active:
+            Form.objects.filter(corporation=self.corporation, active=True).update(active=False)
+        super().save(*args, **kwargs)
+
     class Meta:
         default_permissions = (())
         permissions = (
@@ -30,7 +35,11 @@ class Form(models.Model):
             ("manage_corp_forms", "Can manage corp forms."),
         )
         constraints = [
-            models.UniqueConstraint(fields=["corporation", "active"], name="only_one_active_form_per_corp"),
+            models.UniqueConstraint(
+                fields=["corporation", "active"],
+                condition=models.Q(active=True),
+                name="only_one_active_form_per_corp"
+            ),
             models.UniqueConstraint(fields=["corporation", "name"], name="unique_form_name_per_corp")
         ]
 
