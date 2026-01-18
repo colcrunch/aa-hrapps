@@ -24,7 +24,20 @@ div.form-tool {
 }
 
 .dropzone {
-    border-style: dashed; border-width: thick; height: 40vh; align-items: center; padding-top: 12.5vh
+    border-style: dashed;
+    border-width: thick;
+    height: 40vh;
+    align-items: center;
+    padding-top: 12.5vh;
+}
+
+.dropzone.invalid-field {
+    border-color: red;
+}
+
+.dropzone.invalid-field>h4 {
+    color: red;
+    visibility: visible !important;
 }
 
 .hidden {

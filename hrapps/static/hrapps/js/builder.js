@@ -98,6 +98,7 @@ function addField(event, templateId = null) {
     cardDiv.addEventListener("dragstart", dragstartHandler);
     if (designer.children.length === 1) {
         dropfield.classList.remove("visible")
+        dropfield.querySelector(".dropzone").classList.remove("invalid-field");
         dropfield.classList.add("invisible", "hidden");
     }
     parent.append(clone);
@@ -169,6 +170,8 @@ function validateForm() {
 
     if (questions.length === 0) {
         console.log("A form must have questions");
+        const dropzone = document.querySelector(".dropzone");
+        dropzone.classList.add("invalid-field");
         validForm = false;
     }
 
