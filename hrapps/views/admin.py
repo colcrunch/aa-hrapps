@@ -7,7 +7,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
-from .models import Form
+from hrapps.models import Form
+
+from . import Field
 
 logger = get_extension_logger(__name__)
 
@@ -21,20 +23,9 @@ def get_or_create_corp(corporation_id):
     return corp
 
 
-class Field:
-    def __init__(self, type, question, options=None, required=False):
-        self.type = type
-        self.question = question
-        self.required = required
-        if options is not None:
-            self.options = tuple(options)
-        else:
-            self.options = None
-
-
 # Create your views here.
 def dashboard(request):
-    return render(request, "hrapps/management/dashboard.html")
+    return render(request, "hrapps/admin/dashboard.html")
 
 
 def create_form(request):
@@ -63,7 +54,7 @@ def create_form(request):
     if corp_has_active_form:
         active_form_title = Form.objects.get(corporation__corporation_id=request.user.profile.main_character.corporation_id, active=True).name
 
-    return render(request, "hrapps/management/builder.html",
+    return render(request, "hrapps/admin/builder.html",
                   {"action": "Create",
                    "has_active": corp_has_active_form,
                    "active_form_title": active_form_title})
@@ -100,7 +91,7 @@ def edit_form(request, form_id):
             corporation__corporation_id=request.user.profile.main_character.corporation_id, active=True).name
 
     fields = tuple(fields)
-    return render(request, "hrapps/management/builder.html",
+    return render(request, "hrapps/admin/builder.html",
                   {
                       "action": "Edit",
                       "form": form,
@@ -138,7 +129,7 @@ def view_form(request, form_id):
         fields.append(field)
 
     fields = tuple(fields)
-    return render(request, "hrapps/management/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
+    return render(request, "hrapps/admin/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
 
 
 def copy_form(request, form_id):
@@ -153,10 +144,10 @@ def copy_form(request, form_id):
         copied_form.corporation__corporation_id = request.user.profile.main_character.corporation_id
     copied_form.save()
 
-    return redirect("hrapps:edit_form", form_id=copied_form.pk)
+    return redirect("hradmin:edit_form", form_id=copied_form.pk)
 
 
 def forms_library(request):
     forms = Form.objects.all()
     ctx = {"forms": forms}
-    return render(request, "hrapps/management/form_library.html", ctx)
+    return render(request, "hrapps/admin/form_library.html", ctx)

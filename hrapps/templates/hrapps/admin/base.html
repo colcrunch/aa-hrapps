@@ -1,0 +1,30 @@
+{% extends "hrapps/base.html" %}
+
+{% load i18n %}
+{% load navactive %}
+
+{% block hr_side %}HR Apps Admin{% endblock %}
+
+{% block header_nav_brand %}{% translate "HR Apps" %}{% endblock %}
+
+{% block header_nav_collapse_left %}
+    <li class="nav-item">
+        <a
+            class="nav-link {% navactive request 'hradmin:create_form' %}"
+            href="{% url 'hradmin:create_form' %}"
+        >
+            {% translate "Create Form" %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% navactive request 'hradmin:forms_library' %}"
+           href="{% url 'hradmin:forms_library' %}"
+        >
+            {% translate "Forms Library" %}
+        </a>
+    </li>
+{% endblock %}
+
+{% block header_nav_collapse_right %}
+    {# Nothing #}
+{% endblock %}

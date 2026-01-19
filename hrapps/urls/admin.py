@@ -1,8 +1,8 @@
 from django.urls import re_path
 
-from . import views
+from hrapps.views import admin as views
 
-app_name = 'hrapps'
+app_name = 'hradmin'
 
 urlpatterns = [
     re_path(r"^$", views.dashboard, name="dashboard"),

@@ -1,4 +1,4 @@
-{% extends "hrapps/base.html" %}
+{% extends "hrapps/admin/base.html" %}
 
 {% load evelinks %}
 {% load i18n %}
@@ -51,17 +51,17 @@
                                     {{ form.corporation.corporation_name }}
                                 </td>
                                 <td>
-                                    <a href="{% url 'hrapps:view_form' form.id %}" class="btn btn-sm btn-info">
+                                    <a href="{% url 'hradmin:view_form' form.id %}" class="btn btn-sm btn-info">
                                         <span class="fa fa-eye"></span>
                                     </a>
-                                    <a href="{% url 'hrapps:edit_form' form.id %}" class="btn btn-sm btn-warning">
+                                    <a href="{% url 'hradmin:edit_form' form.id %}" class="btn btn-sm btn-warning">
                                         <span class="fa fa-edit"></span>
                                     </a>
-                                    <a href="{% url 'hrapps:copy_form' form.id %}" class="btn btn-sm btn-secondary">
+                                    <a href="{% url 'hradmin:copy_form' form.id %}" class="btn btn-sm btn-secondary">
                                         <span class="fa fa-copy"></span>
                                     </a>
                                     <button
-                                            data-delete-url="{% url 'hrapps:delete_form' form.id %}"
+                                            data-delete-url="{% url 'hradmin:delete_form' form.id %}"
                                             class="btn btn-sm btn-danger"
                                             onClick="showDeleteConfirmModal(this)"
                                     >

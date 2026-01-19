@@ -1,4 +1,4 @@
-{% extends "hrapps/base.html" %}
+{% extends "hrapps/admin/base.html" %}
 {% include "hrapps/delete_confirm_modal.html" %}
 
 {% load i18n %}
@@ -19,14 +19,14 @@
             <div class="card-header">
                 {%  translate "Form Details" %}
                 <div class="float-end">
-                    <a href="{% url 'hrapps:edit_form' form.id %}" class="btn btn-xs btn-primary">
+                    <a href="{% url 'hradmin:edit_form' form.id %}" class="btn btn-xs btn-primary">
                         <span class="fa fa-edit"></span>
                     </a>
-                    <a href="{% url 'hrapps:copy_form' form.id %}" class="btn btn-xs btn-dark">
+                    <a href="{% url 'hradmin:copy_form' form.id %}" class="btn btn-xs btn-dark">
                         <span class="fa fa-copy"></span>
                     </a>
                     <button
-                            data-delete-url="{% url 'hrapps:delete_form' form.id %}"
+                            data-delete-url="{% url 'hradmin:delete_form' form.id %}"
                             class="btn btn-xs btn-danger"
                             onClick="showDeleteConfirmModal(this)">
                         <span class="fa fa-times"></span>
