@@ -1,5 +1,79 @@
 {% extends "hrapps/main/base.html" %}
 
+{% load evelinks %}
+
+{% block extra_css %}
+    {% include "bundles/datatables-css-bs5.html" %}
+{% endblock %}
+
 {% block hrapps_content %}
-    <p>Something</p>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h3>My Applications</h3>
+            <div class="card">
+                <div class="card-body">
+                    {% if applications %}
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            No applications found.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Available Corps</h3>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if corp_forms %}
+                        <table class="table table-hover" id="corps-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Corp</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form in corp_forms %}
+                                    <tr>
+                                        <td>
+                                            <img src="{{ form.corporation|corporation_logo_url:32 }}"
+                                         alt="{{ form.corporation.corporation_name }} Logo">
+                                            {{ form.corporation.corporation_name }}
+                                        </td>
+                                        <td class="dt-center">
+                                            <a href="{% url "hrapps:apply" form.pk %}" class="btn btn-primary">Apply</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            No available corps found.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_javascript %}
+    {% include "bundles/datatables-js-bs5.html" %}
+
+    {% get_datatables_language_static LANGUAGE_CODE as DT_LANG_PATH %}
+
+    <script>
+        $(document).ready(function() {
+            $("#corps-table").DataTable({
+                language: {
+                    url: '{{ DT_LANG_PATH }}'
+                },
+                columns: [null, {orderable: false}]
+            })
+        })
+    </script>
 {% endblock %}

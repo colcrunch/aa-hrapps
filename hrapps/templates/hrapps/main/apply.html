@@ -1,0 +1,32 @@
+{% extends "hrapps/main/base.html" %}
+
+{% block hrapps_content %}
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>Apply to {{ form.corporation.corporation_name }}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Form
+                </div>
+                <div class="card-body">
+                    {% for field in fields %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                {% with "hrapps/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
+                                    {% include field_partial with field=field disabled=False id=forloop.counter %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary">Submit Application</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
