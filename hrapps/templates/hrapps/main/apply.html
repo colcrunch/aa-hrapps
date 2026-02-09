@@ -14,19 +14,159 @@
                 </div>
                 <div class="card-body">
                     {% for field in fields %}
-                        <div class="card mb-2">
+                        <div class="card mb-2" data-fieldtype="{{ field.type }}" id="question_card_{{ forloop.counter }}">
                             <div class="card-body">
                                 {% with "hrapps/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
                                     {% include field_partial with field=field disabled=False id=forloop.counter %}
                                 {% endwith %}
+                                {% if field.required %}
+                                    <div class="invalid-feedback">
+                                        This is a required field.
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-primary">Submit Application</button>
+                    <button class="btn btn-primary" onclick="submitApplication()">Submit Application</button>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block extra_javascript %}
+    <script>
+        function getQuestions() {
+            const questions = [];
+            document.querySelectorAll("[id^='question_card_']").forEach(elem => {
+                questions.push(elem);
+            })
+            return questions;
+        }
+
+        function validateCheckboxes(elem) {
+            const inputs = elem.querySelectorAll("input")
+            const required = elem.querySelector(".form-field").getAttribute("data-required")
+
+            if (!required) {
+                return true;
+            }
+
+            let itemSelected = false;
+
+            for (let i = 0; i < inputs.length; i++) {
+                const input = inputs[i];
+                if (input.checked) {
+                    itemSelected = true;
+                }
+            }
+
+            if (itemSelected === false) {
+                inputs.forEach((input) => {
+                    input.classList.add("invalid-field")
+                })
+                elem.classList.add("invalid-field")
+                elem.querySelector(".invalid-feedback").style.display = "block";
+            }
+            else {
+                if (elem.classList.contains("invalid-field")) {
+                    inputs.forEach((input) => {
+                        input.classList.remove("invalid-field")
+                    })
+                    elem.classList.remove("invalid-field");
+                    elem.querySelector(".invalid-feedback").style.display = "none";
+                }
+            }
+
+            return itemSelected;
+        }
+
+        function validateTextField(elem) {
+            const input = elem.querySelector("input")
+            const elemValid = input.checkValidity()
+
+            if (!elemValid) {
+                input.classList.add("invalid-field");
+
+                elem.querySelector(".invalid-feedback").style.display = "block";
+
+                return false;
+            }
+
+            if (input.classList.contains("invalid-field")) {
+                input.classList.remove("invalid-field");
+                elem.querySelector(".invalid-feedback").style.display = "none";
+
+                return true;
+            }
+        }
+
+        function validateTextArea(elem) {
+            const input = elem.querySelector("textarea")
+            const elemValid = input.checkValidity()
+
+            if (!elemValid) {
+                input.classList.add("invalid-field");
+
+                elem.querySelector(".invalid-feedback").style.display = "block";
+
+                return false;
+            }
+
+            if (input.classList.contains("invalid-field")) {
+                input.classList.remove("invalid-field");
+                elem.querySelector(".invalid-feedback").style.display = "none";
+
+                return true;
+            }
+        }
+
+        function customReportValidity(elem, type) {
+            let valid = false;
+
+            switch (type) {
+                case "dropdown":
+                    valid = true;
+                    break;
+                case "checkboxes":
+                    valid = validateCheckboxes(elem);
+                    break;
+                case "text-field":
+                    valid = validateTextField(elem);
+                    break;
+                case "text-area":
+                    valid = validateTextArea(elem);
+                    break;
+                default:
+                    break;
+            }
+            return valid;
+        }
+
+        function validateForm() {
+            let validForm = true;
+
+            let questions = getQuestions();
+
+            for (let i =0; i < questions.length; i++) {
+                let question = questions[i];
+                let question_type = question.getAttribute("data-fieldtype");
+                let question_text = question.querySelector("label");
+
+                const questionValid = customReportValidity(question, question_type)
+                validForm = validForm && questionValid
+            }
+
+            return validForm;
+        }
+
+        function submitApplication() {
+            const validForm = validateForm();
+
+            return 0;
+        }
+
+    </script>
 {% endblock %}

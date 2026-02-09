@@ -16,13 +16,6 @@ div.form-tool {
     position: sticky;
 }
 
-.btn-xs {
-        --bs-btn-padding-y: 0.15rem;
-        --bs-btn-padding-x: 0.5rem;
-        --bs-btn-font-size: 0.750rem;
-        --bs-btn-border-radius: 0.15rem;
-}
-
 .dropzone {
     border-style: dashed;
     border-width: thick;
@@ -42,13 +35,4 @@ div.form-tool {
 
 .hidden {
     position: absolute;
-}
-
-input.invalid-field {
-    border-color: red;
-}
-
-input.invalid-field:focus {
-    border-color: red;
-    box-shadow: 0 0 0 .25rem rgba(255, 0, 0, .25);
 }

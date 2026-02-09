@@ -1,3 +1,6 @@
+import json
+from email.policy import default
+
 from django.shortcuts import render
 
 from . import Field
@@ -24,4 +27,6 @@ def apply(request, form_id):
     for field in form.fields:
         fields.append(Field(**field))
 
-    return render(request, "hrapps/main/apply.html", {"form": form, "fields": fields})
+    return render(request,
+                  "hrapps/main/apply.html",
+                  {"form": form, "fields": fields, "fields_json": json.dumps(fields, default=lambda o: o.__dict__())})

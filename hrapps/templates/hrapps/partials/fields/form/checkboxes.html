@@ -1,5 +1,5 @@
 <div class="form-field checkbox-field" data-required="{{ field.required }}">
-    <h5>{{ field.question }} {% if field.required %}<span style="color: red">*</span>{% endif %}</h5>
+    <label for="question_{{ id }}" class="h5 {% if field.required %}required-field{% endif %}">{{ field.question }}</label>
     {% for option in field.options %}
         <div class="form-check">
             <input

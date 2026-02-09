@@ -1,0 +1,30 @@
+.required-field::after {
+    content: '*';
+    color: red;
+    font-weight: bold;
+}
+
+.btn-xs {
+        --bs-btn-padding-y: 0.15rem;
+        --bs-btn-padding-x: 0.5rem;
+        --bs-btn-font-size: 0.750rem;
+        --bs-btn-border-radius: 0.15rem;
+}
+
+input.invalid-field, textarea.invalid-field {
+    border-color: red;
+}
+
+input.invalid-field:focus, textarea.invalid-field:focus {
+    border-color: red;
+    box-shadow: 0 0 0 .25rem rgba(255, 0, 0, .25);
+}
+
+.form-check-input.invalid-field {
+    accent-color: red;
+    filter: invert(85%) sepia(83%) saturate(6726%) hue-rotate(360deg) brightness(111%) contrast(111%);
+}
+
+.form-check-input.invalid-field:checked {
+    filter:none;
+}

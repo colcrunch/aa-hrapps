@@ -7,3 +7,11 @@ class Field:
             self.options = tuple(options)
         else:
             self.options = None
+
+    def __dict__(self):
+        return {
+            "type": self.type,
+            "question": self.question,
+            "required": self.required,
+            "options": self.options
+        }
