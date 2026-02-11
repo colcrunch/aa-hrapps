@@ -332,7 +332,7 @@ function successNotification() {
         if (timeLeft === 0) {
             clearInterval(timer);
 
-            window.location.href = "/hrapps/";
+            window.location.href = "/hradmin/";
         }
     }, 1000);
 }
