@@ -99,8 +99,8 @@
                 input.classList.remove("invalid-field");
                 elem.querySelector(".invalid-feedback").style.display = "none";
 
-                return true;
             }
+            return true;
         }
 
         function validateTextArea(elem) {
@@ -118,9 +118,9 @@
             if (input.classList.contains("invalid-field")) {
                 input.classList.remove("invalid-field");
                 elem.querySelector(".invalid-feedback").style.display = "none";
-
-                return true;
             }
+
+            return true;
         }
 
         function customReportValidity(elem, type) {
@@ -162,8 +162,62 @@
             return validForm;
         }
 
+        function getAnswers() {
+            let questions = getQuestions();
+
+            let answers = [];
+
+            for (let i =0; i < questions.length; i++) {
+                let question = questions[i];
+                let question_type = question.getAttribute("data-fieldtype");
+
+                if (question_type === "checkboxes") {
+                    let inputs = question.querySelectorAll("input");
+                    let answer = [];
+                    for (let j = 0; j < inputs.length; j++) {
+                        if (inputs[j].checked) {
+                            answer.push(inputs[j].value);
+                        }
+                    }
+                    answers.push(answer);
+                }
+                else {
+                    answers.push(question.querySelector("[id^=question_]").value);
+                }
+            }
+            return answers;
+        }
+
+        function buildApplicationJson() {
+            const questions = getQuestions();
+
+            let applicationJson = {questions:[]};
+            const answers = getAnswers();
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const question_text = question.querySelector("label").innerText;
+                const question_answer = answers[i];
+
+                applicationJson.questions.push({question: question_text, answer: question_answer});
+            }
+
+            return applicationJson;
+        }
+
         function submitApplication() {
             const validForm = validateForm();
+
+            console.log("Validating form...");
+            if (!validForm) {
+                console.log("Form invalid. Please correct errors and try again.")
+                return;
+            }
+
+            console.log("Form valid.");
+            console.log("Submitting application...");
+            const application = buildApplicationJson();
+
+            console.log(application);
 
             return 0;
         }

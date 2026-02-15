@@ -23,6 +23,10 @@ def dashboard(request):
 def apply(request, form_id):
     form = Form.objects.get(pk=form_id)
 
+    if (request.method == "POST"):
+        # TODO: Process form submission
+        pass
+
     fields = []
     for field in form.fields:
         fields.append(Field(**field))
