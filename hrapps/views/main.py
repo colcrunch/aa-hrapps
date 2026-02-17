@@ -11,7 +11,11 @@ def dashboard(request):
     user = request.user
     applications = FormResponse.objects.filter(user=user)
 
-    recruiting_corps = Form.objects.filter(active=True)
+    recruiting_corps = Form.objects.filter(active=True).exclude(
+        corporation__in=applications
+        .filter(status__in=("pending", "under_review"))
+        .values_list("form__corporation", flat=True)
+    )
 
     ctx = {
         "applications": applications,
