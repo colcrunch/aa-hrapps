@@ -1,5 +1,4 @@
 import json
-from email.policy import default
 
 from allianceauth.services.hooks import get_extension_logger
 from celery.bin.control import status
