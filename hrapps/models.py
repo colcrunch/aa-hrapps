@@ -44,11 +44,38 @@ class Form(models.Model):
         ]
 
 
+class StatusChoices(models.TextChoices):
+    PENDING = "pending", "Pending"
+    UNDER_REVIEW = "under_review", "Under Review"
+    APPROVED = "approved", "Approved"
+    REJECTED = "rejected", "Rejected"
+    WITHDRAWN = "withdrawn", "Withdrawn"
+
+
 class FormResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     form = models.ForeignKey(Form, on_delete=models.DO_NOTHING, related_name="responses")
     created = models.DateTimeField(auto_now_add=True)
     response = models.JSONField()
+    recruiter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="recruited_responses")
+    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="reviewed_responses")
+    status = models.CharField(max_length=15, choices=StatusChoices.choices, default=StatusChoices.PENDING)
+
+
+    @property
+    def status_color_class(self):
+        colors = {
+            "pending": "primary",
+            "under_review": "warning",
+            "approved": "success",
+            "rejected": "danger",
+            "withdrawn": "secondary"
+        }
+        return colors[self.status]
+
+    @property
+    def status_label(self):
+        return StatusChoices(self.status).label
 
     class Meta:
         default_permissions = (())
