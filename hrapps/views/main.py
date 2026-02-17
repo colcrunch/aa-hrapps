@@ -1,10 +1,16 @@
 import json
 from email.policy import default
 
-from django.shortcuts import render
+from allianceauth.services.hooks import get_extension_logger
+from celery.bin.control import status
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.contrib import messages
 
 from . import Field
 from hrapps.models import FormResponse, Form
+
+logger = get_extension_logger(__name__)
 
 
 def dashboard(request):
@@ -24,12 +30,33 @@ def dashboard(request):
     return render(request, "hrapps/main/dashboard.html", ctx)
 
 
+def user_has_active_application(user, form):
+    return (FormResponse.objects.filter(user=user, form=form).exists()
+                or FormResponse.objects.filter(user=user, form__corporation=form.corporation).exists())
+
+
 def apply(request, form_id):
     form = Form.objects.get(pk=form_id)
+    if user_has_active_application(request.user, form):
+        messages.error(request, "You already applied for this form.")
+        return redirect("hrapps:dashboard")
 
-    if (request.method == "POST"):
-        # TODO: Process form submission
-        pass
+    if request.method == "POST":
+        body = request.body.decode("utf-8")
+        logger.debug(body)
+        body_json = json.loads(body)
+
+        # Check if the user already has an application for this form or corp
+        if user_has_active_application(request.user, form):
+            messages.error(request, "You already applied for this form.")
+            return HttpResponse(status=403)
+
+        try:
+            FormResponse.objects.create(form=form, user=request.user, response=body_json)
+            return HttpResponse(status=201)
+        except Exception as e:
+            logger.error(e)
+            return HttpResponse(status=500)
 
     fields = []
     for field in form.fields:
