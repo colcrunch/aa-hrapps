@@ -215,11 +215,26 @@
 
             console.log("Form valid.");
             console.log("Submitting application...");
-            const application = buildApplicationJson();
+            const applicationJson = buildApplicationJson();
 
-            console.log(application);
-
-            return 0;
+            console.log(applicationJson);
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify(applicationJson)
+            })
+            .then(response => {
+                console.log(`Response Status: ${response.status}`);
+                if (response.ok) {
+                    console.log("Application submitted successfully.");
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
         }
 
     </script>
