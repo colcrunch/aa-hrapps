@@ -1,13 +1,12 @@
 import json
 
 from allianceauth.services.hooks import get_extension_logger
-from celery.bin.control import status
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
-from . import Field
-from hrapps.models import FormResponse, Form
+from . import Field, ResponseItem
+from hrapps.models import FormResponse, Form, ResponseComment
 
 logger = get_extension_logger(__name__)
 
@@ -64,3 +63,16 @@ def apply(request, form_id):
     return render(request,
                   "hrapps/main/apply.html",
                   {"form": form, "fields": fields, "fields_json": json.dumps(fields, default=lambda o: o.__dict__())})
+
+
+def view_application(request, application_id):
+    application = FormResponse.objects.get(pk=application_id)
+    app_comments = ResponseComment.objects.filter(response=application)
+
+    response_items = []
+    for item in application.response["questions"]:
+        response_items.append(ResponseItem(item["question"], item["answer"]))
+
+    return render(request,
+                  "hrapps/main/view.html",
+                  {"application": application, "comments": app_comments, "responses": response_items})

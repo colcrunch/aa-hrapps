@@ -15,3 +15,12 @@ class Field:
             "required": self.required,
             "options": self.options
         }
+
+class ResponseItem:
+    def __init__(self, question, answer):
+        self.question = question
+        self.answer = answer
+
+    @property
+    def answer_is_list(self):
+        return isinstance(self.answer, list)

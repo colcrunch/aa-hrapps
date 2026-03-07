@@ -1,0 +1,87 @@
+{% extends "hrapps/main/base.html" %}
+{% load evelinks %}
+
+{% block hrapps_content %}
+    <div class="row">
+        <h3>View Application</h3>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card card-primary mb-3">
+                <div class="card-header">
+                    <div class="card-title">Application Details</div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <img src="{{ application.user.profile.main_character.character_id|character_portrait_url:128 }}">
+                        <br>
+                        {{ application.user.profile.main_character.character_name }}
+                    </div>
+                    <hr>
+                    <dl>
+                        <dt>Corporation</dt>
+                        <dd>{{ application.form.corporation.corporation_name }}</dd>
+                        <dt>Application Date</dt>
+                        <dd>{{ application.created }}</dd>
+                        <dt>Recruiter</dt>
+                        <dd>
+                            {% if application.recruiter %}
+                                {{ application.recruiter }}
+                            {% else %}
+                                Unclaimed
+                            {% endif %}
+                        </dd>
+                        <dt>Reviewer</dt>
+                        <dd>
+                            {% if application.reviewer %}
+                                {{ application.reviewer }}
+                            {% else %}
+                                Unclaimed
+                            {% endif %}
+                        </dl>
+                </div>
+            </div>
+            <div class="card card-primary mb-3">
+                <div class="card-header">
+                    <div class="card-title">Characters</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Coming Soon</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card card-primary mb-3">
+                <div class="card-header">
+                    <div class="card-title">Responses</div>
+                </div>
+                <div class="card-body">
+                    {% for response in responses %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ response.question }}</h5>
+                                {% if response.answer_is_list %}
+                                    <ul>
+                                    {% for answer in response.answer %}
+                                        <li>{{ answer }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="card-text">{{ response.answer }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card card-primary mb-3">
+                <div class="card-header">
+                    <div class="card-title">Comments</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Coming Soon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
