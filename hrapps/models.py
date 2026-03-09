@@ -83,6 +83,8 @@ class FormResponse(models.Model):
             ("view_all_responses", "Can view responses."),
             ("create_response", "Can create responses."),
             ("view_corp_responses", "Can view corp responses."),
+            ("claim_recruiter", "Can claim a response as a recruiter."),
+            ("claim_reviewer", "Can claim a response as a reviewer.")
         )
 
 
