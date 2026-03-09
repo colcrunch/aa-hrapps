@@ -36,7 +36,7 @@
             <div class="card-body">
                 <dl>
                     <dt>{% translate "Form Description" %}</dt>
-                    <dd>{{ form.description }}</dd>
+                    <dd>{{ form.description|linebreaksbr|urlize }}</dd>
                 </dl>
                 <dl>
                     <dt>{% translate "Created" %}</dt>
