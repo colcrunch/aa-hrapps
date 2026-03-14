@@ -9,6 +9,7 @@ class HRAppPerms(models.Model):
         default_permissions = (())
         permissions = (
             ("access_hrapps", "Can access hrapps."),
+            ("access_hradmin", "Can access the admin frontend."),
             ("manage_hrapps", "Full management access."),
         )
 
@@ -84,7 +85,8 @@ class FormResponse(models.Model):
             ("create_response", "Can create responses."),
             ("view_corp_responses", "Can view corp responses."),
             ("claim_recruiter", "Can claim a response as a recruiter."),
-            ("claim_reviewer", "Can claim a response as a reviewer.")
+            ("claim_reviewer", "Can claim a response as a reviewer."),
+            ("modify_status", "Can change the status of a response.")
         )
 
 
