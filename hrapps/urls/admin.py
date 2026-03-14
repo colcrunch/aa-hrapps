@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import permission_required
 from django.urls import re_path
 
 from hrapps.views import admin as views
@@ -12,4 +13,8 @@ urlpatterns = [
     re_path(r"^form/(?P<form_id>\d+)/copy/$", views.copy_form, name="copy_form"),
     re_path(r"^form/(?P<form_id>\d+)/delete/$", views.delete_form, name="delete_form"),
     re_path(r"^form/(?P<form_id>\d+)/$", views.view_form, name="view_form"),
+    re_path(r"^resp/(?P<response_id>\d+)/$", views.view_response, name="view_response")
 ]
+
+for url in urlpatterns:
+    url.callback = permission_required("hrapps.access_hradmin")(url.callback)
