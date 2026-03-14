@@ -10,7 +10,12 @@
         <div class="col-md-3">
             <div class="card card-primary mb-3">
                 <div class="card-header">
-                    <div class="card-title">Application Details</div>
+                    <div class="card-title">
+                        Application Details
+                        <div class="float-end">
+                            <span class="badge bg-{{ application.status_color_class }}">{{ application.status_label }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="text-center">
@@ -34,6 +39,9 @@
                             {% else %}
                                 Unclaimed
                             {% endif %}
+                            {% if perms.hrapps.claim_recruiter %}
+                                <button class="btn btn-xs btn-warning float-end">Claim</button>
+                            {% endif %}
                         </dd>
                         <dt>Reviewer</dt>
                         <dd>
@@ -42,7 +50,17 @@
                             {% else %}
                                 Unclaimed
                             {% endif %}
-                        </dl>
+                            {% if perms.hrapps.claim_reviewer %}
+                                <button class="btn btn-xs btn-warning float-end">Claim</button>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                    <hr>
+                    <div class="d-flex justify-content-center">
+                        {% if request.user == application.user %}
+                            <button class="btn btn-xs btn-danger">Withdraw Application</button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="card card-primary mb-3">
