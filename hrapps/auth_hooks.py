@@ -16,16 +16,8 @@ class HRAdminMenuItemHook(MenuItemHook):
             navactive=["hradmin:"]
         )
 
-        self.admin_perms = (
-            "hrappperms.manage_hrapps",
-            "formresponse.view_all_responses",
-            "formresponse.view_corp_responses",
-            "form.manage_all_forms",
-            "form.manage_corp_forms",
-        )
-
     def render(self, request):
-        if any(request.user.has_perm(perm) for perm in self.admin_perms):
+        if request.user.has_perm("hrapps.access_hradmin"):
             return MenuItemHook.render(self, request)
         return ''
 
