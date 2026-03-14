@@ -1,5 +1,6 @@
 {% extends "hrapps/main/base.html" %}
 {% load evelinks %}
+{% load hrtags %}
 
 {% block hrapps_content %}
     <div class="row">
@@ -52,10 +53,10 @@
                     <table class="table table-striped">
                         <thead>
                             <th>Character</th>
-                            {% if corptools %}
+                            {% if corptools is not None %}
                                 <th>CT</th>
                             {% endif %}
-                            {% if memberaudit %}
+                            {% if memberaudit is not None%}
                                 <th>MA</th>
                             {% endif %}
                         </thead>
@@ -68,11 +69,23 @@
                                         style="border-radius: 0.375rem"
                                     > {{ character.character_name }}
                                 </td>
-                                {% if corptools %}
-                                    <td></td>
+                                {% if corptools is not None %}
+                                    <td>
+                                    {% if character.character_name in corptools %}
+                                        <a href="{% url "corptools:reactmain" character.character_id %}" type="button" class="btn btn-success"><span class="fa fa-check-circle"></span></a>
+                                    {% else %}
+                                        <button class="btn btn-danger"><span class="fa fa-times-circle"></span></button>
+                                    {% endif %}
+                                    </td>
                                 {% endif %}
-                                {% if memberaudit %}
-                                    <td></td>
+                                {% if memberaudit is not None %}
+                                    <td>
+                                    {% if character.character_name in memberaudit %}
+                                        <a href="{% url "memberaudit:character_viewer" memberaudit|get_item:character.character_name %}" type="button" class="btn btn-success"><span class="fa fa-check-circle"></span></a>
+                                    {% else %}
+                                        <button class="btn btn-danger"><span class="fa fa-times-circle"></span></button>
+                                    {% endif %}
+                                    </td>
                                 {% endif %}
                             </tr>
                             {% endfor %}

@@ -85,7 +85,9 @@ def get_memberaudit_chars(characters):
 
         char_audits = Character.objects\
             .filter(eve_character__in=characters)\
-            .values_list("eve_character__character_name", flat=True)
+            .values_list("eve_character__character_name", "pk")
+
+        char_audits = dict(char_audits)
 
         return char_audits
 
