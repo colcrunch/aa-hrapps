@@ -1,13 +1,11 @@
 import json
 
-from allianceauth.eveonline.models import EveCharacter
 from allianceauth.services.hooks import get_extension_logger
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from django.conf import settings
 
-from . import Field, ResponseItem
+from . import Field, get_application_context
 from hrapps.models import FormResponse, Form, ResponseComment
 
 logger = get_extension_logger(__name__)
@@ -67,55 +65,10 @@ def apply(request, form_id):
                   {"form": form, "fields": fields, "fields_json": json.dumps(fields, default=lambda o: o.__dict__())})
 
 
-def get_corptools_chars(characters):
-    if "corptools" in settings.INSTALLED_APPS:
-        from corptools.models.audits import CharacterAudit
-
-        char_audits = CharacterAudit.objects\
-            .filter(character__in=characters)\
-            .values_list("character__character_name", flat=True)
-        return char_audits
-
-    return None
-
-
-def get_memberaudit_chars(characters):
-    if "memberaudit" in settings.INSTALLED_APPS:
-        from memberaudit.models.characters import Character
-
-        char_audits = Character.objects\
-            .filter(eve_character__in=characters)\
-            .values_list("eve_character__character_name", "pk")
-
-        char_audits = dict(char_audits)
-
-        return char_audits
-
-    return None
-
-
 def view_application(request, application_id):
-    application = FormResponse.objects.get(pk=application_id)
-    app_comments = ResponseComment.objects.filter(response=application)
-    characters = EveCharacter.objects\
-        .filter(character_ownership__user=application.user)\
-        .select_related()\
-        .order_by('character_name')
+    ctx = get_application_context(request, application_id)
+    if ctx is None or request.user != ctx["application"].user:
+        messages.error(request, "The requested application could not be found.")
+        return redirect("hrapps:dashboard")
 
-    response_items = []
-    for item in application.response["questions"]:
-        response_items.append(ResponseItem(item["question"], item["answer"]))
-
-    corptools = get_corptools_chars(characters) if "corptools" in settings.INSTALLED_APPS else None
-    memberaudit = get_memberaudit_chars(characters) if "memberaudit" in settings.INSTALLED_APPS else None
-
-    return render(request,
-                  "hrapps/main/view.html",
-                  {
-                      "application": application,
-                      "comments": app_comments,
-                      "responses": response_items,
-                      "characters": characters,
-                      "corptools": corptools,
-                      "memberaudit": memberaudit,
-                  })
+    return render(request, "hrapps/main/view.html", ctx)

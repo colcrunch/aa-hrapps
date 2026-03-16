@@ -1,3 +1,12 @@
+from django.conf import settings
+from allianceauth.eveonline.models import EveCharacter
+from allianceauth.services.hooks import get_extension_logger
+
+from hrapps.models import FormResponse, ResponseComment
+
+logger = get_extension_logger(__name__)
+
+
 class Field:
     def __init__(self, type, question, options=None, required=False):
         self.type = type
@@ -24,3 +33,64 @@ class ResponseItem:
     @property
     def answer_is_list(self):
         return isinstance(self.answer, list)
+
+
+def get_corptools_chars(characters):
+    if "corptools" in settings.INSTALLED_APPS:
+        from corptools.models.audits import CharacterAudit
+
+        char_audits = CharacterAudit.objects\
+            .filter(character__in=characters)\
+            .values_list("character__character_name", flat=True)
+        return char_audits
+
+    return None
+
+
+def get_memberaudit_chars(characters):
+    if "memberaudit" in settings.INSTALLED_APPS:
+        from memberaudit.models.characters import Character
+
+        char_audits = Character.objects\
+            .filter(eve_character__in=characters)\
+            .values_list("eve_character__character_name", "pk")
+
+        char_audits = dict(char_audits)
+
+        return char_audits
+
+    return None
+
+
+def get_application_context(request, application_id, admin=False):
+    try:
+        application = FormResponse.objects.get(pk=application_id)
+    except FormResponse.DoesNotExist as e:
+        return None
+
+    if admin == True or request.user.has_perm("hrapps.manage_hrapps"):
+        app_comments = ResponseComment.objects.filter(response=application)
+    else:
+        # Only load non-private comments for applicants.
+        app_comments = ResponseComment.objects.filter(response=application, private=False)
+    characters = EveCharacter.objects \
+        .filter(character_ownership__user=application.user) \
+        .select_related() \
+        .order_by('character_name')
+
+    response_items = []
+    for item in application.response["questions"]:
+        response_items.append(ResponseItem(item["question"], item["answer"]))
+
+    corptools = get_corptools_chars(characters) if "corptools" in settings.INSTALLED_APPS else None
+    memberaudit = get_memberaudit_chars(characters) if "memberaudit" in settings.INSTALLED_APPS else None
+
+    return {
+      "application": application,
+      "comments": app_comments,
+      "responses": response_items,
+      "characters": characters,
+      "corptools": corptools,
+      "memberaudit": memberaudit,
+      "admin": admin,
+    }
