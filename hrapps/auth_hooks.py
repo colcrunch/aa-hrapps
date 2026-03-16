@@ -10,7 +10,7 @@ class HRAdminMenuItemHook(MenuItemHook):
     def __init__(self):
         MenuItemHook.__init__(
             self,
-            _("HR Apps Admin"),
+            _("HR Admin"),
             "fa-solid fa-id-card-clip",
             "hradmin:dashboard",
             navactive=["hradmin:"]
