@@ -29,8 +29,10 @@ def dashboard(request):
 
 
 def user_has_active_application(user, form):
-    return (FormResponse.objects.filter(user=user, form=form).exists()
-                or FormResponse.objects.filter(user=user, form__corporation=form.corporation).exists())
+    active_status = ("under_review", "accepted", "pending")
+    return (FormResponse.objects.filter(user=user, form=form, status__in=active_status).exists()
+                or FormResponse.objects\
+                .filter(user=user, form__corporation=form.corporation, status__in=active_status).exists())
 
 
 def apply(request, form_id):
