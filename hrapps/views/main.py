@@ -35,9 +35,6 @@ def user_has_active_application(user, form):
 
 def apply(request, form_id):
     form = Form.objects.get(pk=form_id)
-    if user_has_active_application(request.user, form):
-        messages.error(request, "You already applied for this form.")
-        return redirect("hrapps:dashboard")
 
     if request.method == "POST":
         body = request.body.decode("utf-8")
@@ -55,6 +52,10 @@ def apply(request, form_id):
         except Exception as e:
             logger.error(e)
             return HttpResponse(status=500)
+
+    if user_has_active_application(request.user, form):
+        messages.error(request, "You already applied for this form.")
+        return redirect("hrapps:dashboard")
 
     fields = []
     for field in form.fields:
