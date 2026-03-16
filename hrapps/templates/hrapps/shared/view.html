@@ -1,4 +1,5 @@
-{% extends "hrapps/main/base.html" %}
+{% extends admin|yesno:"hrapps/admin/base.html,hrapps/main/base.html" %}
+
 {% load evelinks %}
 {% load hrtags %}
 

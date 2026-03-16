@@ -71,4 +71,4 @@ def view_application(request, application_id):
         messages.error(request, "The requested application could not be found.")
         return redirect("hrapps:dashboard")
 
-    return render(request, "hrapps/main/view.html", ctx)
+    return render(request, "hrapps/shared/view.html", ctx)

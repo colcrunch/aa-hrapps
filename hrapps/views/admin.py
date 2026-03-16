@@ -204,4 +204,4 @@ def view_response(request, response_id):
         messages.error(request, "The requested application could not be found.")
         return redirect("hradmin:dashboard")
 
-    return render(request, "hrapps/main/view.html", ctx)
+    return render(request, "hrapps/shared/view.html", ctx)
