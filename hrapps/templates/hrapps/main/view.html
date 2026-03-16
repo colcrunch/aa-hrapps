@@ -39,7 +39,7 @@
                             {% else %}
                                 Unclaimed
                             {% endif %}
-                            {% if perms.hrapps.claim_recruiter %}
+                            {% if admin and perms.hrapps.claim_recruiter %}
                                 <button class="btn btn-xs btn-warning float-end">Claim</button>
                             {% endif %}
                         </dd>
@@ -50,15 +50,23 @@
                             {% else %}
                                 Unclaimed
                             {% endif %}
-                            {% if perms.hrapps.claim_reviewer %}
+                            {% if admin and perms.hrapps.claim_reviewer %}
                                 <button class="btn btn-xs btn-warning float-end">Claim</button>
                             {% endif %}
                         </dd>
                     </dl>
                     <hr>
-                    <div class="d-flex justify-content-center">
-                        {% if request.user == application.user %}
-                            <button class="btn btn-xs btn-danger">Withdraw Application</button>
+                    <div class="d-flex justify-content-center flex-wrap">
+                        {% if request.user == application.user and not admin %}
+                            <button class="btn btn-xs btn-danger m-1">Withdraw Application</button>
+                        {% endif %}
+                        {% if admin and perms.hrapps.modify_status %}
+                            <button class="btn btn-xs btn-warning m-1">Mark in Progress</button>
+                            <button class="btn btn-xs btn-success m-1">Approve</button>
+                            <button class="btn btn-xs btn-danger m-1">Reject</button>
+                        {% endif %}
+                        {% if admin and perms.hrapps.manage_hrapps %}
+                            <button class="btn btn-xs btn-primary m-1">Mark Pending</button>
                         {% endif %}
                     </div>
                 </div>
