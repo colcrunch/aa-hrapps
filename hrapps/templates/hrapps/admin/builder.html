@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block hrapps_content %}
-    {% include "hrapps/partials/builder_templates.html" %}
-    {% include "hrapps/partials/builder_success_modal.html" %}
-    {% include "hrapps/partials/activate_confirm_modal.html" %}
+    {% include "hrapps/admin/partials/builder/builder_templates.html" %}
+    {% include "hrapps/admin/partials/builder/builder_success_modal.html" %}
+    {% include "hrapps/admin/partials/builder/activate_confirm_modal.html" %}
     <div class="row">
         <h3>Form Builder</h3>
     </div>
@@ -86,7 +86,7 @@
                     </div>
                 {% if action|lower == "edit" %}
                     {% for field in fields %}
-                        {% with "hrapps/partials/fields/builder/"|add:field.type|add:".html" as field_partial %}
+                        {% with "hrapps/admin/partials/builder/fields/"|add:field.type|add:".html" as field_partial %}
                             {% include field_partial with field=field id=forloop.counter %}
                         {% endwith %}
                     {% endfor %}

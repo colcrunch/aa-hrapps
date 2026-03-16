@@ -36,7 +36,7 @@
                         <ul class="list-group list-group-flush">
                             {% if field.options %}
                                 {% for option in field.options %}
-                                    {% include "hrapps/partials/fields/builder/list-group-item.html" with option=option id=forloop.counter %}
+                                    {% include "hrapps/admin/partials/builder/fields/list-group-item.html" with option=option id=forloop.counter %}
                                 {% endfor %}
                             {% endif %}
                         </ul>
