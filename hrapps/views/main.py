@@ -75,3 +75,27 @@ def view_application(request, application_id):
         return redirect("hrapps:dashboard")
 
     return render(request, "hrapps/shared/view.html", ctx)
+
+
+def withdraw_application(request, application_id):
+    try:
+        app = FormResponse.objects.get(pk=application_id)
+    except FormResponse.DoesNotExist:
+        messages.error(request, "The requested application could not be found.")
+        return redirect("hrapps:dashboard")
+
+    if request.user != app.user:
+        messaged.error(request, "The requested application could not be found.")
+        return redurect("hrapps:dashboard")
+
+    app.status = "withdrawn"
+    try:
+        app.save()
+    except Exception as e:
+        messages.error(request, "There was an error when attempting to withdraw your application.")
+        logger.error(f"An error occurred while attempting to withdraw FormResponse {application_id}")
+        logger.error(e)
+        return redirect("hrapps:dashboard")
+
+    messages.success(request, "Application successfully withdrawn.")
+    return redirect("hrapps:dashboard")

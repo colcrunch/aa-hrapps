@@ -59,7 +59,7 @@
                     <hr>
                     <div class="d-flex justify-content-center flex-wrap">
                         {% if request.user == application.user and not admin %}
-                            <button class="btn btn-xs btn-danger m-1">Withdraw Application</button>
+                            <button class="btn btn-xs btn-danger m-1" data-bs-toggle="modal" data-bs-target="#withdraw-modal">Withdraw Application</button>
                         {% endif %}
                         {% if admin and perms.hrapps.modify_status %}
                             <button class="btn btn-xs btn-warning m-1">Mark in Progress</button>
@@ -157,4 +157,8 @@
             </div>
         </div>
     </div>
+
+    {% if not admin %}
+        {% include "hrapps/main/partials/view/withdraw_confirm_modal.html" %}
+    {% endif %}
 {% endblock %}

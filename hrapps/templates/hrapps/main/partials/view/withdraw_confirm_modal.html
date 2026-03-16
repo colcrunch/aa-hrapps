@@ -1,0 +1,17 @@
+<div class="modal fade" id="withdraw-modal" tabindex="-1" role="dialog" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h6 class="modal-title" id="withdrawModalLabel">Withdraw Application</h6>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want withdraw your application to {{ application.form.corporation.corporation_name }}?</p>
+                <p>This action is irreversable, if you change your mind, you will have to start a new application.</p>
+                <div class="text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url "hrapps:withdraw" application.pk %}" class="btn btn-danger" id="withdraw-btn">Withdraw</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
