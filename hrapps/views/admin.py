@@ -1,15 +1,16 @@
 import copy
 import json
 
+from allianceauth.authentication.decorators import permissions_required
 from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
 from hrapps.models import Form
 
-from . import Field
+from . import Field, get_application_context
 
 logger = get_extension_logger(__name__)
 
@@ -28,6 +29,7 @@ def dashboard(request):
     return render(request, "hrapps/admin/dashboard.html")
 
 
+@permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms", "hrapps.create_forms"))
 def create_form(request):
     if request.method == "POST":
         body = request.body.decode("utf-8")
@@ -60,8 +62,25 @@ def create_form(request):
                    "active_form_title": active_form_title})
 
 
+def user_can_manage_form(request, corp: EveCorporationInfo):
+    if request.user.has_perm("hrapps.manage_all_forms"):
+        return True
+
+    if request.user.profile.main_character.corporation_id != corp.corporation_id:
+        return False
+
+    return True
+
+
+@permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms"))
 def edit_form(request, form_id):
     form = Form.objects.get(id=form_id)
+
+    if not user_can_manage_form(request, Form.corporation):
+        messages.error(request, "You do not have permission to manage this form.")
+        sender = request.META.get("HTTP_REFERER", "/")
+        return redirect(sender)
+
     if request.method == "POST":
         body = request.body.decode("utf-8")
         logger.debug(body)
@@ -101,26 +120,34 @@ def edit_form(request, form_id):
                   })
 
 
+@permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms"))
 def delete_form(request, form_id):
     sender = request.META.get("HTTP_REFERER", "/")
 
     try:
         form = Form.objects.get(id=form_id)
-        if request.user.profile.main_character.corporation_id == form.corporation.corporation_id \
-                or request.user.is_superuser:
-            form.delete()
 
-            messages.success(request, "Form deleted successfully.")
-        else:
-            messages.error(request, "You do not have permission to delete this form.")
+        if not user_can_manage_form(request, Form.corporation):
+            messages.error(request, "You do not have permission to manage this form.")
+            return redirect(sender)
+
+        form.delete()
+
+        messages.success(request, "Form deleted successfully.")
     except Exception as e:
         logger.error(e)
         messages.error(request, "Error deleting form.")
     return redirect(sender)
 
 
+@permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms", "hrapps.create_form"))
 def view_form(request, form_id):
     form = Form.objects.get(id=form_id)
+
+    if not user_can_manage_form(request, Form.corporation):
+        messages.error(request, "You do not have permission to manage this form.")
+        sender = request.META.get("HTTP_REFERER", "/")
+        return redirect(sender)
 
     fields = []
 
@@ -132,6 +159,7 @@ def view_form(request, form_id):
     return render(request, "hrapps/admin/form_viewer.html", {"action": "Edit", "form": form, "fields": fields})
 
 
+@permissions_required(("hrapps.create_forms", "hrapps.manage_corp_forms"))
 def copy_form(request, form_id):
     form = Form.objects.get(id=form_id)
 
@@ -147,7 +175,26 @@ def copy_form(request, form_id):
     return redirect("hradmin:edit_form", form_id=copied_form.pk)
 
 
+@permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms", "hrapps.create_form"))
 def forms_library(request):
     forms = Form.objects.all()
     ctx = {"forms": forms}
     return render(request, "hrapps/admin/form_library.html", ctx)
+
+
+@permissions_required(("hrapps.view_all_responses", "hrapps.view_corp_responses"))
+def view_response(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if not request.user.has_perm("hrapps.view_all_responses"):
+        # If you don't have view_all and are able to see then you must have view_corp.
+        if not request.user.profile.main_character.corporation_id == ctx["application"].form.corporation.corporation_id:
+            messages.error(request, "You do not have permission to view this response.")
+            sender = request.META.get("HTTP_REFERER", "/")
+            return redirect(sender)
+
+    if ctx is None:
+        messages.error(request, "The requested application could not be found.")
+        return redirect("hradmin:dashboard")
+
+    return render(request, "hrapps/main/view.html", ctx)
