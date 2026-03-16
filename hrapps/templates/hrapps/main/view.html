@@ -35,7 +35,7 @@
                         <dt>Recruiter</dt>
                         <dd>
                             {% if application.recruiter %}
-                                {{ application.recruiter }}
+                                {{ application.recruiter.profile.main_character.character_name }}
                             {% else %}
                                 Unclaimed
                             {% endif %}
@@ -46,7 +46,7 @@
                         <dt>Reviewer</dt>
                         <dd>
                             {% if application.reviewer %}
-                                {{ application.reviewer }}
+                                {{ application.reviewer.profile.main_character.character_name }}
                             {% else %}
                                 Unclaimed
                             {% endif %}
