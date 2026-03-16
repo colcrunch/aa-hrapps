@@ -1,0 +1,24 @@
+<div class="modal fade" id="success-modal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+     style="
+     --bs-modal-header-border-color: '';
+     --bs-modal-footer-border-color: '';
+     --bs-modal-border-color: '';
+     color: white;"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-success" style="box-shadow: 0 0 20px rgba(25, 135, 84, 0.6);">
+            <div class="modal-header">
+                <h4 class="modal-title"><span class="fa fa-check-circle"></span> Success!</h4>
+            </div>
+            <div class="modal-body">
+                    <p id="success-message">Your application to {{ form.corporation.corporation_name }} has been submitted.</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <p>You will be redirected back to the dashboard in <span id="countdown"></span> seconds.</p>
+                <small style="font-size: x-small">
+                    If you are not redirected, click <a href="{% url 'hrapps:dashboard' %}" style="color: white">here</a>.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
