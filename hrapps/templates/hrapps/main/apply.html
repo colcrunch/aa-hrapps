@@ -16,7 +16,7 @@
                     {% for field in fields %}
                         <div class="card mb-2" data-fieldtype="{{ field.type }}" id="question_card_{{ forloop.counter }}">
                             <div class="card-body">
-                                {% with "hrapps/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
+                                {% with "hrapps/shared/partials/fields/form/"|add:field.type|add:".html" as field_partial %}
                                     {% include field_partial with field=field disabled=False id=forloop.counter %}
                                 {% endwith %}
                                 {% if field.required %}
