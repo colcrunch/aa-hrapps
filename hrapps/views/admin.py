@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
-from hrapps.models import Form
+from hrapps.models import Form, FormResponse
 
 from . import Field, get_application_context
 
@@ -26,7 +26,14 @@ def get_or_create_corp(corporation_id):
 
 # Create your views here.
 def dashboard(request):
-    return render(request, "hrapps/admin/dashboard.html")
+    user_corp = request.user.profile.main_character.corporation_id
+    if request.user.is_superuser or request.user.has_perm("hrapps.manage_hrapps"):
+        active_apps = FormResponse.objects.filter(status__in=("pending", "under_review"))
+    else:
+        active_apps = FormResponse.objects\
+            .filter(status__in=("pending", "under_review"), form__corporation__corporation_id=user_corp)
+
+    return render(request, "hrapps/admin/dashboard.html", {"active_apps": active_apps})
 
 
 @permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms", "hrapps.create_forms"))

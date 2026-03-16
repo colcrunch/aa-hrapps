@@ -1,5 +1,53 @@
 {% extends "hrapps/admin/base.html" %}
 
+{% load evelinks %}
+
 {% block hrapps_content %}
-    <p>Something</p>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Active Applications
+                </div>
+                <div class="card-body">
+                    {% if active_apps %}
+                        <table class="table table-hover" id="applications-table">
+                            <thead>
+                                <th>Main Character</th>
+                                <th>Corp</th>
+                                <th>Recruiter</th>
+                                <th>Reviewer</th>
+                                <th>Status</th>
+                                <th> </th>
+                            </thead>
+                            <tbody>
+                                {% for app in active_apps %}
+                                    <td><img src="{{ app.user.profile.main_character|character_portrait_url:32 }}"
+                                      alt="{{ app.user.main_character.character_name }} Portrait" style="border-radius: .375rem">
+                                        {{ app.user.profile.main_character.character_name }}
+                                    </td>
+                                    <td><img src="{{ app.form.corporation|corporation_logo_url:32 }}"
+                                     alt="{{ app.form.corporation.corporation_name }} Logo" style="border-radius: .375rem">
+                                        {{ app.form.corporation.corporation_name }}
+                                    </td>
+                                    <td>{% if app.recruiter %}{{ app.recruiter.profile.main_character.character_name }}{% else %} Unclaimed {% endif %}</td>
+                                    <td>{% if app.reviewer %}{{ app.reviewer.profile.main_character.character_name }}{% else %} Unclaimed {% endif %}</td>
+                                    <td><span class="badge bg-{{ app.status_color_class }}">{{ app.status_label }}</span></td>
+                                    <td>
+                                        <a href="{% url "hradmin:view_response" app.pk %}" class="btn btn-primary">
+                                            <span class="fa fa-eye"></span>
+                                        </a>
+                                    </td>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            No active applications for
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
