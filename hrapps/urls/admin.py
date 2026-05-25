@@ -13,7 +13,11 @@ urlpatterns = [
     re_path(r"^form/(?P<form_id>\d+)/copy/$", views.copy_form, name="copy_form"),
     re_path(r"^form/(?P<form_id>\d+)/delete/$", views.delete_form, name="delete_form"),
     re_path(r"^form/(?P<form_id>\d+)/$", views.view_form, name="view_form"),
-    re_path(r"^resp/(?P<response_id>\d+)/$", views.view_response, name="view_response")
+    re_path(r"^resp/(?P<response_id>\d+)/$", views.view_response, name="view_response"),
+    re_path(r"^resp/(?P<response_id>\d+)/approve/$", views.approve_response, name="approve_response"),
+    re_path(r"^resp/(?P<response_id>\d+)/reject/$", views.reject_response, name="reject_response"),
+    re_path(r"^resp/(?P<response_id>\d+)/pend/$", views.pend_response, name="pend_response"),
+    re_path(r"^resp/(?P<response_id>\d+)/review/$", views.review_status_response, name="review_status_response"),
 ]
 
 for url in urlpatterns:

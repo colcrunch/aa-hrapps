@@ -205,3 +205,91 @@ def view_response(request, response_id):
         return redirect("hradmin:dashboard")
 
     return render(request, "hrapps/shared/view.html", ctx)
+
+@permissions_required(("hrapps.modify_status",))
+def approve_response(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if ctx is None:
+        # This should never happen
+        # TODO: Send notification via auth to admins.
+        messages.error(request, "An unexpected error occurred please report this to your IT team.")
+        logger.critical(f"An unexpected error occurred when attempting to approve form response: {response_id}. "
+                        f"Application context returned none. Please open an report this on the aa-hrapps github.")
+        return redirect("hradmin:dashboard")
+
+    application = ctx.get("application")
+    application.status = "approved"
+    application.save()
+
+    # TODO: Notify applicant via auth notifications.
+    messages.success(request, "Application approved successfully.")
+
+    return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.modify_status",))
+def reject_response(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if ctx is None:
+        # This should never happen
+        # TODO: Send notification via auth to admins.
+        messages.error(request, "An unexpected error occurred please report this to your IT team.")
+        logger.critical(f"An unexpected error occurred when attempting to reject form response: {response_id}. "
+                        f"Application context returned none. Please open an report this on the aa-hrapps github.")
+        return redirect("hradmin:dashboard")
+
+    application = ctx.get("application")
+    application.status = "rejected"
+    application.save()
+
+    # TODO: Notify applicant via auth notifications.
+    messages.success(request, "Application successfully rejected.")
+
+    return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.manage_hrapps",))
+def pend_response(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if ctx is None:
+        # This should never happen
+        # TODO: Send notification via auth to admins.
+        messages.error(request, "An unexpected error occurred please report this to your IT team.")
+        logger.critical(f"An unexpected error occurred when attempting to pend form response: {response_id}. "
+                        f"Application context returned none. Please open an report this on the aa-hrapps github.")
+        return redirect("hradmin:dashboard")
+
+    application = ctx.get("application")
+    application.status = "pending"
+    application.save()
+
+    # TODO: Notify applicant via auth notifications.
+    messages.info(request, "Application marked pending.")
+
+    return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.modify_status",))
+def review_status_response(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if ctx is None:
+        # This should never happen
+        # TODO: Send notification via auth to admins.
+        messages.error(request, "An unexpected error occurred please report this to your IT team.")
+        logger.critical(f"An unexpected error occurred when attempting change status of "
+                        f"form response: {response_id} to Under Review. Application context returned none. "
+                        f"Please open an report this on the aa-hrapps github.")
+        return redirect("hradmin:dashboard")
+
+    application = ctx.get("application")
+    application.status = "under_review"
+    application.save()
+
+    # TODO: Notify applicant via auth notifications.
+    messages.warning(request, "Application marked Under Review.")
+
+    return redirect("hradmin:view_response", response_id)
