@@ -1,0 +1,16 @@
+<div class="modal fade" id="review-modal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h6 class="modal-title" id="reviewModalLabel">Mark Application Under Review</h6>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you wish to mark the application of {{ application.user.profile.main_character.character_name }} to join {{ application.form.corporation.corporation_name }} as Under Review? </p>
+                <div class="text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url "hradmin:review_status_response" application.pk %}" class="btn btn-warning" id="review-btn">Mark Under Review</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

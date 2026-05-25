@@ -1,0 +1,16 @@
+<div class="modal fade" id="approve-modal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h6 class="modal-title" id="approveModalLabel">Approve Application</h6>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you wish to approve the application of {{ application.user.profile.main_character.character_name }} to join {{ application.form.corporation.corporation_name }}? </p>
+                <div class="text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url "hradmin:approve_response" application.pk %}" class="btn btn-success" id="approve-btn">Approve</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
