@@ -41,7 +41,7 @@
                                 Unclaimed
                             {% endif %}
                             {% if admin and perms.hrapps.claim_recruiter %}
-                                <button class="btn btn-xs btn-warning float-end">Claim</button>
+                                <a href="{% url "hradmin:claim_recruiter" application.id %}" class="btn btn-xs btn-warning float-end">Claim</a>
                             {% endif %}
                         </dd>
                         <dt>Reviewer</dt>
@@ -52,7 +52,7 @@
                                 Unclaimed
                             {% endif %}
                             {% if admin and perms.hrapps.claim_reviewer %}
-                                <button class="btn btn-xs btn-warning float-end">Claim</button>
+                                <a href="{% url "hradmin:claim_reviewer" application.id %}" class="btn btn-xs btn-warning float-end">Claim</a>
                             {% endif %}
                         </dd>
                     </dl>

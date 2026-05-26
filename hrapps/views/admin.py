@@ -282,7 +282,7 @@ def review_status_response(request, response_id):
         messages.error(request, "An unexpected error occurred please report this to your IT team.")
         logger.critical(f"An unexpected error occurred when attempting change status of "
                         f"form response: {response_id} to Under Review. Application context returned none. "
-                        f"Please open an report this on the aa-hrapps github.")
+                        f"Please open a report for this on the aa-hrapps github.")
         return redirect("hradmin:dashboard")
 
     application = ctx.get("application")
@@ -292,4 +292,43 @@ def review_status_response(request, response_id):
     # TODO: Notify applicant via auth notifications.
     messages.warning(request, "Application marked Under Review.")
 
+    return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.claim_recruiter",))
+def claim_recruiter(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if ctx is None:
+        # This should never happen.
+        messages.error(request, "An unexpected error occurred please report this to your IT team.")
+        logger.critical(f"An unexpected error occurred when attempting to claim recruiter form response: {response_id}."
+                        f"Application context returned none. Please open a report for this on the aa-hrapps github.")
+        return redirect("hradmin:dashboard")
+
+    application = ctx.get("application")
+    application.recruiter = request.user
+    application.save()
+
+    messages.success(request, "Claimed application as recruiter successfully.")
+    return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.claim_reviewer",))
+def claim_reviewer(request, response_id):
+    ctx = get_application_context(request, response_id, True)
+
+    if ctx is None:
+        # This should never happen.
+        messages.error(request, "An unexpected error occurred please report this to your IT team.")
+        logger.critical(f"An unexpected error occurred when attempting to claim reviewer form response: {response_id}."
+                        f"Application context returned none. Please open a report for this on the aa-hrapps github.")
+
+        return redirect("hradmin:dashboard")
+
+    application = ctx.get("application")
+    application.reviewer = request.user
+    application.save()
+
+    messages.success(request, "Claimed application as reviewer successfully.")
     return redirect("hradmin:view_response", response_id)
