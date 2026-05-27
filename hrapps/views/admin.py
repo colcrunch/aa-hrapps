@@ -9,7 +9,7 @@ from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
 from hrapps.models import Form, FormResponse
 
-from . import Field, get_application_context, add_comment
+from . import Field, get_application_context, add_comment, add_reply
 
 logger = get_extension_logger(__name__)
 
@@ -341,3 +341,14 @@ def create_comment(request, response_id):
     else:
         messages.error(request, "Unable to add comment.")
     return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.create_comment",))
+def create_reply(request, response_id, comment_id):
+    success = add_reply(request, response_id, comment_id)
+    if success:
+        messages.success(request, "Reply added.")
+    else:
+        messages.error(request, "Unable to add reply.")
+    return redirect("hradmin:view_response", response_id)
+

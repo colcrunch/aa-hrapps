@@ -26,9 +26,10 @@
                             <p>{{ reply.content }}</p>
                         {% endfor %}
                     {% endif %}
-                    <form action="{% if admin %}reply_admin{% else %}reply_main{% endif %}" method="POST">
+                    <form action="{% if admin %}{% url "hradmin:create_reply" application.id comment.id %}{% else %}{% url "hrapps:create_reply" application.id comment.id %}{% endif %}" method="POST">
                         <label for="reply">Comment</label>
-                        <textarea class="form-control" rows="3" placeholder="Reply..." id="comment"></textarea>
+                        <textarea class="form-control" rows="3" placeholder="Reply..." id="reply" name="reply"></textarea>
+                        {% csrf_token %}
                         <button class="btn btn-md btn-primary float-end mt-1" type="submit">Reply</button>
                     </form>
                 </div>

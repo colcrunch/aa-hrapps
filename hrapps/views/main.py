@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
-from . import Field, get_application_context, add_comment
-from hrapps.models import FormResponse, Form, ResponseComment
+from . import Field, get_application_context, add_comment, add_reply
+from hrapps.models import FormResponse, Form
 
 logger = get_extension_logger(__name__)
 
@@ -102,11 +102,21 @@ def withdraw_application(request, application_id):
     return redirect("hrapps:dashboard")
 
 
-@permissions_required(("hrapps.create_comment"))
+@permissions_required(("hrapps.create_comment",))
 def create_comment(request, response_id):
     success = add_comment(request, response_id)
     if success:
         messages.success(request, "Comment added.")
     else:
         messages.error(request, "Unable to add comment.")
+    return redirect("hrapps:view", response_id)
+
+
+@permissions_required(("hrapps.create_comment",))
+def create_reply(request, response_id, comment_id):
+    success = add_reply(request, response_id, comment_id)
+    if success:
+        messages.success(request, "Reply added.")
+    else:
+        messages.error(request, "Unable to add reply.")
     return redirect("hrapps:view", response_id)

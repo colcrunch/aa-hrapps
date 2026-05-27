@@ -130,3 +130,24 @@ def add_comment(request, response_id):
     except Exception as e:
         logger.error(e)
         return False
+
+
+def add_reply(request, response_id, comment_id):
+    user = request.user
+    reply = request.POST.get("reply")
+    private = ResponseComment.objects.get(pk=comment_id).private
+
+    try:
+        comment = ResponseComment(
+            user=user,
+            content=reply,
+            private=private,
+            response_id=response_id,
+            reply_to_id=comment_id
+        )
+
+        comment.save()
+        return True
+    except Exception as e:
+        logger.error(e)
+        return False

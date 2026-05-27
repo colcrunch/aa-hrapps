@@ -15,6 +15,7 @@ urlpatterns = [
     re_path(r"^form/(?P<form_id>\d+)/$", views.view_form, name="view_form"),
     re_path(r"^resp/(?P<response_id>\d+)/$", views.view_response, name="view_response"),
     re_path(r"^resp/(?P<response_id>\d+)/comment/$", views.create_comment, name="create_comment"),
+    re_path(r"^resp/(?P<response_id>\d+)/comment/(?P<comment_id>\d+)/reply/$", views.create_reply, name="create_reply"),
     re_path(r"^resp/(?P<response_id>\d+)/approve/$", views.approve_response, name="approve_response"),
     re_path(r"^resp/(?P<response_id>\d+)/reject/$", views.reject_response, name="reject_response"),
     re_path(r"^resp/(?P<response_id>\d+)/pend/$", views.pend_response, name="pend_response"),
