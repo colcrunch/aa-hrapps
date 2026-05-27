@@ -62,6 +62,17 @@ def get_memberaudit_chars(characters):
     return None
 
 
+def process_comments(comments):
+    root_comments = comments.filter(reply_to=None)
+    replied_comments = comments.filter(reply_to__isnull=False).values_list("reply_to", flat=True)
+    replies = dict()
+
+    for id in replied_comments:
+        replies[id] = comments.filter(reply_to=id)
+
+    return root_comments, replies
+
+
 def get_application_context(request, application_id, admin=False):
     try:
         application = FormResponse.objects.get(pk=application_id)
@@ -73,6 +84,7 @@ def get_application_context(request, application_id, admin=False):
     else:
         # Only load non-private comments for applicants.
         app_comments = ResponseComment.objects.filter(response=application, private=False)
+    root_comments, replies = process_comments(app_comments)
     characters = EveCharacter.objects \
         .filter(character_ownership__user=application.user) \
         .select_related() \
@@ -87,7 +99,8 @@ def get_application_context(request, application_id, admin=False):
 
     return {
       "application": application,
-      "comments": app_comments,
+      "root_comments": root_comments,
+      "replies": replies,
       "responses": response_items,
       "characters": characters,
       "corptools": corptools,
