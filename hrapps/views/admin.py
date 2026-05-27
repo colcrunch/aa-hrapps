@@ -5,7 +5,6 @@ from allianceauth.authentication.decorators import permissions_required
 from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, permission_required
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
 from hrapps.models import Form, FormResponse
