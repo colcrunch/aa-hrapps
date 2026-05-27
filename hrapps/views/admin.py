@@ -10,7 +10,7 @@ from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
 from hrapps.models import Form, FormResponse
 
-from . import Field, get_application_context
+from . import Field, get_application_context, add_comment
 
 logger = get_extension_logger(__name__)
 
@@ -331,4 +331,14 @@ def claim_reviewer(request, response_id):
     application.save()
 
     messages.success(request, "Claimed application as reviewer successfully.")
+    return redirect("hradmin:view_response", response_id)
+
+
+@permissions_required(("hrapps.create_comment",))
+def create_comment(request, response_id):
+    success = add_comment(request, response_id)
+    if success:
+        messages.success(request, "Comment added.")
+    else:
+        messages.error(request, "Unable to add comment.")
     return redirect("hradmin:view_response", response_id)

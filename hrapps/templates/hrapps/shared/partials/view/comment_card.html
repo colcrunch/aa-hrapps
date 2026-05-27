@@ -1,0 +1,38 @@
+{% load hrtags %}
+
+<div class="card-header">
+    <div class="card-title">Comments</div>
+</div>
+<div class="card-body">
+    {% if perms.hrapps.create_comment %}
+        <form action="{% if admin %}{% url "hradmin:create_comment" application.id %}{% else %}{% url "hrapps:create_comment" application_id %}{% endif %}" method="POST">
+            <label for="comment">Comment</label>
+            <textarea class="form-control" rows="3" placeholder="Comment..." id="comment" name="comment"></textarea>
+            <div class="float-start">
+                <input class="form-check-input" type="checkbox" id="private" name="private"/>
+                <label for="private">Private</label>
+            </div>
+            {% csrf_token %}
+            <button class="btn btn-md btn-primary float-end mt-1" type="submit">Post</button>
+        </form>
+    {% endif %}
+    {% if root_comments %}
+        {% for comment in root_comments %}
+            <div class="card">
+                <div class="card-body">
+                    <p>{{ comment.content }}</p>
+                    {% if replies|get_item:comment.id %}
+                        {% for reply in replies|get_item:comment.id %}
+                            <p>{{ reply.content }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <form action="{% if admin %}reply_admin{% else %}reply_main{% endif %}" method="POST">
+                        <label for="reply">Comment</label>
+                        <textarea class="form-control" rows="3" placeholder="Reply..." id="comment"></textarea>
+                        <button class="btn btn-md btn-primary float-end mt-1" type="submit">Reply</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

@@ -148,14 +148,11 @@
                     {% endfor %}
                 </div>
             </div>
+            {% if perms.hrapps.view_comment or perms.hrapps.create_comment %}
             <div class="card card-primary mb-3">
-                <div class="card-header">
-                    <div class="card-title">Comments</div>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Coming Soon</p>
-                </div>
+                {% include "hrapps/shared/partials/view/comment_card.html" %}
             </div>
+            {% endif %}
         </div>
     </div>
 

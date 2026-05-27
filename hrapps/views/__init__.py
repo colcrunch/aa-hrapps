@@ -107,3 +107,26 @@ def get_application_context(request, application_id, admin=False):
       "memberaudit": memberaudit,
       "admin": admin,
     }
+
+def add_comment(request, response_id):
+    user = request.user
+    comment = request.POST.get("comment")
+    private = request.POST.get("private")
+    if private is None:
+        private = False
+    else:
+        private = True
+
+    try:
+        comment = ResponseComment(
+            user=user,
+            content=comment,
+            private=private,
+            response_id=response_id
+        )
+
+        comment.save()
+        return True
+    except Exception as e:
+        logger.error(e)
+        return False

@@ -1,11 +1,12 @@
 import json
 
+from allianceauth.authentication.decorators import permissions_required
 from allianceauth.services.hooks import get_extension_logger
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
-from . import Field, get_application_context
+from . import Field, get_application_context, add_comment
 from hrapps.models import FormResponse, Form, ResponseComment
 
 logger = get_extension_logger(__name__)
@@ -99,3 +100,13 @@ def withdraw_application(request, application_id):
 
     messages.success(request, "Application successfully withdrawn.")
     return redirect("hrapps:dashboard")
+
+
+@permissions_required(("hrapps.create_comment"))
+def create_comment(request, response_id):
+    success = add_comment(request, response_id)
+    if success:
+        messages.success(request, "Comment added.")
+    else:
+        messages.error(request, "Unable to add comment.")
+    return redirect("hrapps:view", response_id)
