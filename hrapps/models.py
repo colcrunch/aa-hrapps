@@ -98,6 +98,7 @@ class ResponseComment(models.Model):
     # Private comments and their replies should be hidden from the respondent even if they have the permissions
     # to view/create comments. (Except where user has manage_hrapps perm)
     private = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
         default_permissions = (())
