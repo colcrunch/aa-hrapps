@@ -86,8 +86,8 @@ def withdraw_application(request, application_id):
         return redirect("hrapps:dashboard")
 
     if request.user != app.user:
-        messaged.error(request, "The requested application could not be found.")
-        return redurect("hrapps:dashboard")
+        message.error(request, "The requested application could not be found.")
+        return redirect("hrapps:dashboard")
 
     app.status = "withdrawn"
     try:
