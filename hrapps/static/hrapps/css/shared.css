@@ -28,3 +28,22 @@ input.invalid-field:focus, textarea.invalid-field:focus {
 .form-check-input.invalid-field:checked {
     filter:none;
 }
+
+.list-group-item {
+    border: var(--bs-list-group-border-width) solid var(--bs-card-border-color);
+}
+
+.list-group-horizontal>.list-group-item {
+    border-top:none !important;
+    border-bottom:none !important;
+}
+
+.list-group-horizontal>.list-group-item.item-left {
+    background-color: var(--bs-card-cap-bg);
+    border-right: var(--bs-list-group-border-width) solid var(--bs-card-border-color);
+    border-radius: 0 !important;
+}
+
+.reply-svg {
+    fill: var(--bs-secondary-color);
+}

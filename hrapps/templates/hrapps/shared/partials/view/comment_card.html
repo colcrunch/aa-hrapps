@@ -1,11 +1,14 @@
 {% load hrtags %}
+{% load evelinks %}
+{% load l10n %}
 
 <div class="card-header">
     <div class="card-title">Comments</div>
 </div>
 <div class="card-body">
     {% if perms.hrapps.create_comment %}
-        <form action="{% if admin %}{% url "hradmin:create_comment" application.id %}{% else %}{% url "hrapps:create_comment" application_id %}{% endif %}" method="POST">
+        <form class="mb-2" action="{% if admin %}{% url "hradmin:create_comment" application.id %}{% else %}{% url "hrapps:create_comment" application_id %}{% endif %}" method="POST"
+            style="display: flow-root;">
             <label for="comment">Comment</label>
             <textarea class="form-control" rows="3" placeholder="Comment..." id="comment" name="comment"></textarea>
             <div class="float-start">
@@ -18,21 +21,52 @@
     {% endif %}
     {% if root_comments %}
         {% for comment in root_comments %}
-            <div class="card">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <img src="{{ comment.user.profile.main_character.character_id|character_portrait_url:32 }}"
+                         style="border-radius: 100%;">
+                    &nbsp;{{ comment.user.profile.main_character }}
+                    <div class="float-end">
+                        {{ comment.created|localize }}
+                    </div>
+                </div>
                 <div class="card-body">
                     <p>{{ comment.content }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
                     {% if replies|get_item:comment.id %}
                         {% for reply in replies|get_item:comment.id %}
-                            <p>{{ reply.content }}</p>
+                            <li class="list-group-item" style="padding: 0 !important;">
+                                <ul class="list-group list-group-flush list-group-horizontal">
+                                    <li class="list-group-item item-left" style="display: inline-flex; padding-left: 4px;">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="20px" class="reply-svg" style="transform: scale(-1,-1)">
+                                                <path d="M773.33-200v-157.33q0-56.67-37.66-94.34-37.67-37.66-94.34-37.66h-393L405-332.67l-47.67 47.34L120-522.67 357.33-760 405-712.67 248.33-556h393q84.34 0 141.5 57.17Q840-441.67 840-357.33V-200h-66.67Z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <img
+                                                src="{{ reply.user.profile.main_character.character_id|character_portrait_url:32 }}"
+                                                style="border-radius: 100%">
+                                            &nbsp;{{ comment.user.profile.main_character }}
+                                            <br>
+                                            <small class="text-muted"><i>{{ reply.created|localize }}</i></small>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">{{ reply.content }}</li>
+                                </ul>
+                            </li>
                         {% endfor %}
                     {% endif %}
-                    <form action="{% if admin %}{% url "hradmin:create_reply" application.id comment.id %}{% else %}{% url "hrapps:create_reply" application.id comment.id %}{% endif %}" method="POST">
-                        <label for="reply">Comment</label>
-                        <textarea class="form-control" rows="3" placeholder="Reply..." id="reply" name="reply"></textarea>
-                        {% csrf_token %}
-                        <button class="btn btn-md btn-primary float-end mt-1" type="submit">Reply</button>
-                    </form>
-                </div>
+                    <li class="list-group-item">
+                        <form action="{% if admin %}{% url "hradmin:create_reply" application.id comment.id %}{% else %}{% url "hrapps:create_reply" application.id comment.id %}{% endif %}" method="POST">
+                            <label for="reply">Comment</label>
+                            <textarea class="form-control" rows="3" placeholder="Reply..." id="reply" name="reply"></textarea>
+                            {% csrf_token %}
+                            <button class="btn btn-md btn-primary float-end mt-1" type="submit">Reply</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         {% endfor %}
     {% endif %}
