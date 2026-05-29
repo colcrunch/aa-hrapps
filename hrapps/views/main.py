@@ -103,20 +103,20 @@ def withdraw_application(request, application_id):
 
 
 @permissions_required(("hrapps.create_comment",))
-def create_comment(request, response_id):
-    success = add_comment(request, response_id)
+def create_comment(request, application_id):
+    success = add_comment(request, application_id)
     if success:
         messages.success(request, "Comment added.")
     else:
         messages.error(request, "Unable to add comment.")
-    return redirect("hrapps:view", response_id)
+    return redirect("hrapps:view", application_id)
 
 
 @permissions_required(("hrapps.create_comment",))
-def create_reply(request, response_id, comment_id):
-    success = add_reply(request, response_id, comment_id)
+def create_reply(request, application_id, comment_id):
+    success = add_reply(request, application_id, comment_id)
     if success:
         messages.success(request, "Reply added.")
     else:
         messages.error(request, "Unable to add reply.")
-    return redirect("hrapps:view", response_id)
+    return redirect("hrapps:view", application_id)

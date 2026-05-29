@@ -7,7 +7,7 @@
 </div>
 <div class="card-body">
     {% if perms.hrapps.create_comment %}
-        <form class="mb-2" action="{% if admin %}{% url "hradmin:create_comment" application.id %}{% else %}{% url "hrapps:create_comment" application_id %}{% endif %}" method="POST"
+        <form class="mb-2" action="{% if admin %}{% url "hradmin:create_comment" application.id %}{% else %}{% url "hrapps:create_comment" application.id %}{% endif %}" method="POST"
             style="display: flow-root;">
             <label for="comment">Comment</label>
             <textarea class="form-control" rows="3" placeholder="Comment..." id="comment" name="comment"></textarea>
