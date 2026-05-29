@@ -26,8 +26,8 @@
                     <img src="{{ comment.user.profile.main_character.character_id|character_portrait_url:32 }}"
                          style="border-radius: 100%;">
                     &nbsp;{{ comment.user.profile.main_character }}
-                    <div class="float-end">
-                        {{ comment.created|localize }}
+                    <div class="float-end local-time" data-utctime="{{ comment.created.isoformat }}">
+                        {{ comment.created.isoformat }}
                     </div>
                 </div>
                 <div class="card-body">
@@ -50,7 +50,7 @@
                                                 style="border-radius: 100%">
                                             &nbsp;{{ comment.user.profile.main_character }}
                                             <br>
-                                            <small class="text-muted"><i>{{ reply.created|localize }}</i></small>
+                                            <small class="text-muted" ><i class="local-time" data-utctime="{{ reply.created.isoformat }}">{{ reply.created.isoformat }}</i></small>
                                         </div>
                                     </li>
                                     <li class="list-group-item">{{ reply.content }}</li>

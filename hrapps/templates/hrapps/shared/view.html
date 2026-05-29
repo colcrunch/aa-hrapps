@@ -166,3 +166,30 @@
         {% include "hrapps/admin/partials/view/review_confirm_modal.html" %}
     {% endif %}
 {% endblock %}
+
+{% block extra_javascript %}
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+           const timeElements = document.querySelectorAll(".local-time");
+           timeElements.forEach(el => {
+               const date = new Date(el.dataset.utctime)
+
+               el.textContent = new Intl.DateTimeFormat(navigator.language, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                }).format(date);
+           });
+
+
+           const replyInfoElements = document.querySelectorAll(".item-left");
+           const widthMax = Math.max(...Array.from(replyInfoElements, el => Math.ceil(el.clientWidth)));
+
+           replyInfoElements.forEach(el => {
+                el.style.width = widthMax+"px";
+           });
+        });
+    </script>
+{% endblock %}
