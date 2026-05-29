@@ -26,8 +26,12 @@
                     <img src="{{ comment.user.profile.main_character.character_id|character_portrait_url:32 }}"
                          style="border-radius: 100%;">
                     &nbsp;{{ comment.user.profile.main_character }}
-                    <div class="float-end local-time" data-utctime="{{ comment.created.isoformat }}">
-                        {{ comment.created.isoformat }}
+                    <div class="float-end">
+                        <small class="text-muted">
+                            <i class="local-time" data-utctime="{{ comment.created.isoformat }}">
+                                {{ comment.created.isoformat }}
+                            </i>
+                        </small>
                     </div>
                 </div>
                 <div class="card-body">
