@@ -47,3 +47,15 @@ input.invalid-field:focus, textarea.invalid-field:focus {
 .reply-svg {
     fill: var(--bs-secondary-color);
 }
+
+.accordion-button:not(.collapsed) {
+    background-color: hsl(from var(--bs-card-cap-bg) h s calc(l - 15%));
+    color: var(--bs-card-cap-color);
+}
+
+:root[data-theme="darkly"] .accordion-button:not(.collapsed) {
+    box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-card-border-color);
+}
+.accordion-button:not(.collapsed)::after {
+    background-image: var(--bs-accordion-btn-icon);
+}
