@@ -185,7 +185,7 @@
 
 
            const replyInfoElements = document.querySelectorAll(".item-left");
-           const widthMax = Math.max(...Array.from(replyInfoElements, el => Math.ceil(el.clientWidth)));
+           const widthMax = Math.max(...Array.from(replyInfoElements, el => Math.ceil(el.getBoundingClientRect().width)));
 
            replyInfoElements.forEach(el => {
                 el.style.width = widthMax+"px";
