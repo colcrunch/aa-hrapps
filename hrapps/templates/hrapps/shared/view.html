@@ -41,7 +41,7 @@
                                 Unclaimed
                             {% endif %}
                             {% if admin and perms.hrapps.claim_recruiter %}
-                                <a href="{% url "hradmin:claim_recruiter" application.id %}" class="btn btn-xs btn-warning float-end">Claim</a>
+                                <a href="{% if application.status == "withdrawn" %}{% else %}{% url "hradmin:claim_recruiter" application.id %}{% endif %}" class="btn btn-xs btn-warning float-end {% if application.status == "withdrawn" %}disabled{% endif %}">Claim</a>
                             {% endif %}
                         </dd>
                         <dt>Reviewer</dt>
@@ -52,7 +52,7 @@
                                 Unclaimed
                             {% endif %}
                             {% if admin and perms.hrapps.claim_reviewer %}
-                                <a href="{% url "hradmin:claim_reviewer" application.id %}" class="btn btn-xs btn-warning float-end">Claim</a>
+                                <a href="{% if application.status == "withdrawn" %}disabled{% else %}{% url "hradmin:claim_reviewer" application.id %}{% endif %}" class="btn btn-xs btn-warning float-end {% if application.status == "withdrawn" %}disabled{% endif %}">Claim</a>
                             {% endif %}
                         </dd>
                     </dl>
@@ -62,13 +62,13 @@
                             <button class="btn btn-xs btn-danger m-1" data-bs-toggle="modal" data-bs-target="#withdraw-modal">Withdraw Application</button>
                         {% endif %}
                         {% if admin and perms.hrapps.modify_status %}
-                            <button class="btn btn-xs btn-warning m-1" data-bs-toggle="modal" data-bs-target="#review-modal">Mark Under Review</button>
-                            <button class="btn btn-xs btn-success m-1" data-bs-toggle="modal" data-bs-target="#approve-modal">Approve</button>
-                            <button class="btn btn-xs btn-danger m-1" data-bs-toggle="modal" data-bs-target="#reject-modal">Reject</button>
+                            <button class="btn btn-xs btn-warning m-1" data-bs-toggle="modal" data-bs-target="#review-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Mark Under Review</button>
+                            <button class="btn btn-xs btn-success m-1" data-bs-toggle="modal" data-bs-target="#approve-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Approve</button>
+                            <button class="btn btn-xs btn-danger m-1" data-bs-toggle="modal" data-bs-target="#reject-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Reject</button>
                         {% endif %}
                         {% if admin and perms.hrapps.manage_hrapps %}
                             {# Default state is pending. Manage perms are required to return an in progress application to default state. #}
-                            <button class="btn btn-xs btn-primary m-1" data-bs-toggle="modal" data-bs-target="#pend-modal">Mark Pending</button>
+                            <button class="btn btn-xs btn-primary m-1" data-bs-toggle="modal" data-bs-target="#pend-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Mark Pending</button>
                         {% endif %}
                     </div>
                 </div>
