@@ -22,11 +22,18 @@
     {% if root_comments %}
         {% for comment in root_comments %}
             <div class="card mb-3">
-                <div class="card-header">
-                    <img src="{{ comment.user.profile.main_character.character_id|character_portrait_url:32 }}"
+                <div class="card-header justigy-content-between d-flex align-items-center" style="flex-grow: 1;">
+                    <div class="d-flex align-items-center" style="flex: 1;">
+                        <img src="{{ comment.user.profile.main_character.character_id|character_portrait_url:32 }}"
                          style="border-radius: 100%;">
-                    &nbsp;{{ comment.user.profile.main_character }}
-                    <div class="float-end">
+                        &nbsp;{{ comment.user.profile.main_character }}
+                    </div>
+                    {% if comment.private %}
+                    <div class="text-center text-warning" style="flex: 1;">
+                        <i>Private Thread</i>
+                    </div>
+                    {% endif %}
+                    <div class="text-end" style="flex: 1;">
                         <small class="text-muted">
                             <i class="local-time" data-utctime="{{ comment.created.isoformat }}">
                                 {{ comment.created.isoformat }}
