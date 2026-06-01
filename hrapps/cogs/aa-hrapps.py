@@ -6,6 +6,8 @@ from discord.ext import commands
 from aadiscordbot.cogs.utils.decorators import sender_has_perm
 from aadiscordbot.app_settings import get_all_servers, get_site_url
 
+from hrapps.models import HRAppDiscordSettings
+
 logger = get_extension_logger(__name__)
 
 class HRApps(commands.Cog):
@@ -14,6 +16,7 @@ class HRApps(commands.Cog):
     """
 
     def __init__(self, bot):
+        self.settings = HRAppDiscordSettings.get_solo()
         self.bot = bot
 
     hrapps_commands = SlashCommandGroup(
@@ -22,7 +25,10 @@ class HRApps(commands.Cog):
         guild_ids=get_all_servers()
     )
 
+    @commands.Cog.listener()
     async def on_member_join(self, member):
+        logger.info(f"Member joined the server.")
+        print("XX")
         pass
 
 
