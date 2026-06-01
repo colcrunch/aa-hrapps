@@ -1,0 +1,49 @@
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">Discord Settings</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <form action="{% url 'hradmin:update_discord' %}" method="post">
+                        {% csrf_token %}
+                            <input type="hidden" name="welcome" value="true">
+                            <div class="card-header">Welcome Settings <div class="float-end"><input type="checkbox" name="enabled" id="welcomeEnabled" {% if discord_settings.enable_welcome_messages %}checked{% endif %}/>&nbsp;<label for="welcomeEnabled">Enabled?</label></div></div>
+                            <div class="card-body">
+                                <label for="welcomeChannel">Welcome Channel</label>
+                                <input type="text" class="form-control" id="welcomeChannel" name="channel" value="{% if discord_settings.welcome_channel %}{{ discord_settings.welcome_channel }}{% endif %}">
+                                <label for="welcomeMessage">Welcome Message</label>
+                                <textarea class="form-control" id="welcomeMessage" name="message" rows="3">{% if discord_settings.welcome_message %}{{ discord_settings.welcome_message }}{% endif %}</textarea>
+                            </div>
+                            <div class="card-footer">
+                                <div class="text-end">
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <form action="{% url 'hradmin:update_discord' %}" method="post">
+                        {% csrf_token %}
+                            <input type="hidden" name="recruitment" value="true">
+                            <div class="card-header">Recruitment Settings <div class="float-end"><input type="checkbox" name="enabled" {% if discord_settings.enable_welcome_messages %}checked{% endif %}/>&nbsp;<label for="recruitmentEnabled">Enabled?</label></div></div>
+                            <div class="card-body">
+                                <label for="recruitmentChannel">Recruitment Channel</label>
+                                <input type="text" class="form-control" id="recruitmentChannel" name="channel" value="{% if discord_settings.recruitment_thread_channel %}{{ discord_settings.recruitment_thread_channel }}{% endif %}">
+                                <label for="recruitmentMessage">Recruiter Role</label>
+                                <input type="text" class="form-control" id="recruitmentRole" name="role" value="{% if discord_settings.recruiter_role %}{{ discord_settings.recruiter_role }}{% endif %}">
+                            </div>
+                            <div class="card-footer">
+                                <div class="text-end">
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

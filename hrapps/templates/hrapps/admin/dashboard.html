@@ -43,11 +43,16 @@
                         </table>
                     {% else %}
                         <div class="alert alert-warning" role="alert">
-                            No active applications for
+                            No active applications.
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
+    {% if discordbot_installed and perms.hrapps.manage_hrapps %}
+        <div class="row mb-3">
+            {% include "hrapps/admin/partials/dashboard/discord_settings.html" %}
+        </div>
+    {% endif %}
 {% endblock %}

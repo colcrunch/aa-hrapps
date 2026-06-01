@@ -5,10 +5,12 @@ from allianceauth.authentication.decorators import permissions_required
 from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.conf import settings
+
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
-from hrapps.models import Form, FormResponse
 
+from hrapps.models import Form, FormResponse, HRAppDiscordSettings
 from . import Field, get_application_context, add_comment, add_reply
 
 logger = get_extension_logger(__name__)
@@ -32,7 +34,16 @@ def dashboard(request):
         active_apps = FormResponse.objects\
             .filter(status__in=("pending", "under_review"), form__corporation__corporation_id=user_corp)
 
-    return render(request, "hrapps/admin/dashboard.html", {"active_apps": active_apps})
+    discordbot_installed = "aadiscordbot" in settings.INSTALLED_APPS
+    discord_settings = HRAppDiscordSettings.get_solo()
+
+    return render(
+        request,
+        "hrapps/admin/dashboard.html",
+        {
+            "active_apps": active_apps,
+            "discordbot_installed": discordbot_installed,
+            "discord_settings": discord_settings,})
 
 
 @permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms", "hrapps.create_forms"))
@@ -352,3 +363,88 @@ def create_reply(request, response_id, comment_id):
         messages.error(request, "Unable to add reply.")
     return redirect("hradmin:view_response", response_id)
 
+
+@permissions_required(("hrapps.manage_hrapps",))
+def update_discord(request):
+    if request.method != "POST":
+        messages.error(request, "Invalid request.")
+        logger.error(f"Invalid request to update discord settings, method: {request.method}. By {request.user}")
+        return redirect("hradmin:dashboard")
+
+    update_success = None
+    keys = "".join(request.POST.keys())
+
+    if "welcome" in keys:
+        update_success = update_discord_welcome_settings(request)
+    elif "recruitment" in keys:
+        update_success = update_discord_recruitment_settings(request)
+    else:
+        messages.error(request, "Invalid request.")
+        logger.error(f"Invalid request to update discord settings, no keys found.")
+        return redirect("hradmin:dashboard")
+
+    if update_success is None or update_success is False:
+        messages.error(request, "Failed to update discord settings.")
+        logger.error(f"Failed to update discord settings. Request data: {request.POST}.")
+        return redirect("hradmin:dashboard")
+
+    messages.success(request, "Discord settings updated successfully.")
+
+    return redirect("hradmin:dashboard")
+
+
+def update_discord_welcome_settings(request):
+    data = request.POST
+    welcomeEnabled = data.get("enabled")
+    welcomeChannel = data.get("channel")
+    welcomeMessage = data.get("message")
+
+    if welcomeChannel == "":
+        welcomeChannel = None
+
+    if welcomeEnabled == "on":
+        welcomeEnabled = True
+    else:
+        welcomeEnabled = False
+
+    try:
+        discord_settings = HRAppDiscordSettings.get_solo()
+        discord_settings.enable_welcome_messages = welcomeEnabled
+        discord_settings.welcome_channel = welcomeChannel
+        discord_settings.welcome_message = welcomeMessage
+        discord_settings.save()
+    except Exception as e:
+        logger.error(f"Failed to update discord welcome settings: {e}")
+        return False
+
+    return True
+
+
+def update_discord_recruitment_settings(request):
+    data = request.POST
+    recruitmentEnabled = data.get("enabled")
+    recruitmentChannel = data.get("channel")
+    recruiterRole = data.get("role")
+
+    if recruitmentChannel == "":
+        recruitmentChannel = None
+
+    if recruiterRole == "":
+        recruiterRole = None
+
+    if recruitmentEnabled == "on":
+        recruitmentEnabled = True
+    else:
+        recruitmentEnabled = False
+
+    try:
+        discord_settings = HRAppDiscordSettings.get_solo()
+        discord_settings.enable_recruitment_messages = recruitmentEnabled
+        discord_settings.recruitment_thread_channel = recruitmentChannel
+        discord_settings.recruiter_role = recruiterRole
+        discord_settings.save()
+    except Exception as e:
+        logger.error(f"Failed to update discord recruitment settings: {e}")
+        return False
+
+    return True

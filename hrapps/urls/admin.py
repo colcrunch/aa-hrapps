@@ -22,6 +22,7 @@ urlpatterns = [
     re_path(r"^resp/(?P<response_id>\d+)/review/$", views.review_status_response, name="review_status_response"),
     re_path(r"^resp/(?P<response_id>\d+)/claim/recruiter/$", views.claim_recruiter, name="claim_recruiter"),
     re_path(r"^resp/(?P<response_id>\d+)/claim/reviewer/$", views.claim_reviewer, name="claim_reviewer"),
+    re_path(r"^discord/settings/$", views.update_discord, name="update_discord"),
 ]
 
 for url in urlpatterns:
