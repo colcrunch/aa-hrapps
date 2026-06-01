@@ -48,10 +48,10 @@ dependencies = [
 optional-dependencies.discordbot = [
     "allianceauth-discordbot>=3.8",
 ]
-urls.Documentation = "https://gitlab.com/colcrunch/aa-hrapps/-/blob/master/README.md"
-urls.Homepage = "https://gitlab.com/colcrunch/aa-hrapps"
-urls.Source = "https://gitlab.com/colcrunch/aa-hrapps.git"
-urls.Tracker = "https://gitlab.com/colcrunch/aa-hrapps/-/issues"
+urls.Documentation = "https://github.com/colcrunch/aa-hrapps/-/blob/master/README.md"
+urls.Homepage = "https://github.com/colcrunch/aa-hrapps"
+urls.Source = "https://github.com/colcrunch/aa-hrapps.git"
+urls.Tracker = "https://github.com/colcrunch/aa-hrapps/-/issues"
 
 [tool.hatch.build]
 include = [
