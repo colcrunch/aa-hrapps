@@ -1,6 +1,8 @@
 from django.db import models
+from django.db.models import Q
 from allianceauth.eveonline.models import EveCorporationInfo
 from django.contrib.auth.models import User
+from solo.models import SingletonModel
 
 # Create your models here.
 class HRAppPerms(models.Model):
@@ -12,6 +14,32 @@ class HRAppPerms(models.Model):
             ("access_hradmin", "Can access the admin frontend."),
             ("manage_hrapps", "Full management access."),
         )
+
+
+class HRAppDiscordSettings(SingletonModel):
+    # Welcome message settings
+    enable_welcome_messages = models.BooleanField(default=False)
+    welcome_channel = models.BigIntegerField(null=True, blank=True)
+    welcome_message = models.TextField(null=True, blank=True)
+
+    # Recruitment thread settings
+    use_recruitment_threads = models.BooleanField(default=False)
+    recruitment_thread_channel = models.BigIntegerField(null=True, blank=True)
+    recruiter_role = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "HRApp Discord Settings"
+        default_permissions = (())
+
+        constraints = [
+            models.CheckConstraint(
+                check=Q(use_recruitment_threads=False) | Q(recruitment_thread_channel__isnull=False),
+                name="recruitment_thread_channel_required_if_threads_enabled"),
+            models.CheckConstraint(
+                check=Q(enable_welcome_messages=False) | Q(welcome_channel__isnull=False),
+                name="welcome_channel_required_if_welcome_messages_enabled")
+        ]
+
 
 
 class Form(models.Model):
