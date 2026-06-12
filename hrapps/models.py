@@ -1,3 +1,4 @@
+import allianceauth.authentication.models
 from django.db import models
 from django.db.models import Q
 from allianceauth.eveonline.models import EveCorporationInfo
@@ -21,11 +22,13 @@ class HRAppDiscordSettings(SingletonModel):
     enable_welcome_messages = models.BooleanField(default=False)
     welcome_channel = models.BigIntegerField(null=True, blank=True)
     welcome_message = models.TextField(null=True, blank=True)
+    ignored_states = models.ManyToManyField(allianceauth.authentication.models.State, blank=True)
 
     # Recruitment thread settings
     use_recruitment_threads = models.BooleanField(default=False)
     recruitment_thread_channel = models.BigIntegerField(null=True, blank=True)
     recruiter_role = models.BigIntegerField(null=True, blank=True)
+    recruit_role = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name = "HRApp Discord Settings"
