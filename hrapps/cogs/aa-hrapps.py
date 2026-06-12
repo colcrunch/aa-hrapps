@@ -135,6 +135,13 @@ class HRApps(commands.Cog):
 
     @commands.slash_command(name="recruit_me", description="Begin the recruitment process.", guild_ids=get_all_servers())
     async def recruit_me(self, ctx):
+        try:
+            user = get_auth_user(ctx.author, ctx.guild)
+            if user.profile.state in self.settings.ignored_states.all():
+                return await ctx.respond("You are not eligible for recruitment.", ephemeral=True)
+        except NotAuthenticated:
+            pass
+
         await add_recruit_role(ctx.author, ctx.guild, self.settings.recruit_role)
         existing_thread = await check_active_threads(ctx.author, ctx.guild, self.settings.recruitment_thread_channel)
         if existing_thread:
