@@ -2,6 +2,7 @@ import copy
 import json
 
 from allianceauth.authentication.decorators import permissions_required
+from allianceauth.authentication.models import State
 from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -36,6 +37,7 @@ def dashboard(request):
 
     discordbot_installed = "aadiscordbot" in settings.INSTALLED_APPS
     discord_settings = HRAppDiscordSettings.get_solo()
+    states = State.objects.all()
 
     return render(
         request,
@@ -43,7 +45,9 @@ def dashboard(request):
         {
             "active_apps": active_apps,
             "discordbot_installed": discordbot_installed,
-            "discord_settings": discord_settings,})
+            "discord_settings": discord_settings,
+            "states": states,
+        })
 
 
 @permissions_required(("hrapps.manage_corp_forms", "hrapps.manage_all_forms", "hrapps.create_forms"))
@@ -398,6 +402,7 @@ def update_discord_welcome_settings(request):
     welcomeEnabled = data.get("enabled")
     welcomeChannel = data.get("channel")
     welcomeMessage = data.get("message")
+    welcomeIgnoredStates = [int(x) for x in data.getlist("ignored_states")]
 
     if welcomeChannel == "":
         welcomeChannel = None
@@ -412,6 +417,7 @@ def update_discord_welcome_settings(request):
         discord_settings.enable_welcome_messages = welcomeEnabled
         discord_settings.welcome_channel = welcomeChannel
         discord_settings.welcome_message = welcomeMessage
+        discord_settings.ignored_states.set(welcomeIgnoredStates)
         discord_settings.save()
     except Exception as e:
         logger.error(f"Failed to update discord welcome settings: {e}")
@@ -425,12 +431,16 @@ def update_discord_recruitment_settings(request):
     recruitmentEnabled = data.get("enabled")
     recruitmentChannel = data.get("channel")
     recruiterRole = data.get("role")
+    recruitRole = data.get("rrole")
 
     if recruitmentChannel == "":
         recruitmentChannel = None
 
     if recruiterRole == "":
         recruiterRole = None
+
+    if recruitRole == "":
+        recruitRole = None
 
     if recruitmentEnabled == "on":
         recruitmentEnabled = True
@@ -439,9 +449,10 @@ def update_discord_recruitment_settings(request):
 
     try:
         discord_settings = HRAppDiscordSettings.get_solo()
-        discord_settings.enable_recruitment_messages = recruitmentEnabled
+        discord_settings.use_recruitment_threads = recruitmentEnabled
         discord_settings.recruitment_thread_channel = recruitmentChannel
         discord_settings.recruiter_role = recruiterRole
+        discord_settings.recruit_role = recruitRole
         discord_settings.save()
     except Exception as e:
         logger.error(f"Failed to update discord recruitment settings: {e}")

@@ -14,6 +14,12 @@
                                 <input type="text" class="form-control" id="welcomeChannel" name="channel" value="{% if discord_settings.welcome_channel %}{{ discord_settings.welcome_channel }}{% endif %}">
                                 <label for="welcomeMessage">Welcome Message</label>
                                 <textarea class="form-control" id="welcomeMessage" name="message" rows="3">{% if discord_settings.welcome_message %}{{ discord_settings.welcome_message }}{% endif %}</textarea>
+                                <label for="welcomeIgnoredStates">Ignored States</label>
+                                <select class="form-control" id="welcomeIgnoredStates" name="ignored_states" multiple>
+                                    {% for state in states %}
+                                        <option value="{{ state.id }}">{{ state.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="card-footer">
                                 <div class="text-end">
@@ -28,12 +34,14 @@
                         <form action="{% url 'hradmin:update_discord' %}" method="post">
                         {% csrf_token %}
                             <input type="hidden" name="recruitment" value="true">
-                            <div class="card-header">Recruitment Settings <div class="float-end"><input type="checkbox" name="enabled" {% if discord_settings.enable_welcome_messages %}checked{% endif %}/>&nbsp;<label for="recruitmentEnabled">Enabled?</label></div></div>
+                            <div class="card-header">Recruitment Settings <div class="float-end"><input type="checkbox" name="enabled" {% if discord_settings.use_recruitment_threads %}checked{% endif %}/>&nbsp;<label for="recruitmentEnabled">Enabled?</label></div></div>
                             <div class="card-body">
                                 <label for="recruitmentChannel">Recruitment Channel</label>
                                 <input type="text" class="form-control" id="recruitmentChannel" name="channel" value="{% if discord_settings.recruitment_thread_channel %}{{ discord_settings.recruitment_thread_channel }}{% endif %}">
-                                <label for="recruitmentMessage">Recruiter Role</label>
+                                <label for="recruitmentRole">Recruiter Role</label>
                                 <input type="text" class="form-control" id="recruitmentRole" name="role" value="{% if discord_settings.recruiter_role %}{{ discord_settings.recruiter_role }}{% endif %}">
+                            <label for="recruitmentRRole">Recruit Role</label>
+                                <input type="text" class="form-control" id="recruitmentRRole" name="rrole" value="{% if discord_settings.recruiter_role %}{{ discord_settings.recruiter_role }}{% endif %}">
                             </div>
                             <div class="card-footer">
                                 <div class="text-end">
