@@ -56,3 +56,21 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{%  block extra_javascript %}
+    {% include "hrapps/bundles/choices-js.html" %}
+    <script>
+        const choices = new Choices('#welcomeIgnoredStates', {
+            "removeItemButton": true,
+            "placeholderValue": "Select States to Ignore..."
+        })
+
+        {% for state in discord_settings.ignored_states.all %}
+            choices.setChoiceByValue("{{ state.id }}");
+        {% endfor %}
+    </script>
+{% endblock %}
+
+{% block more_css %}
+    {% include "hrapps/bundles/choices-css.html" %}
+{% endblock %}
