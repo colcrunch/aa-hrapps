@@ -13,8 +13,19 @@ logger = get_extension_logger(__name__)
 
 
 async def add_recruit_role(member, guild, role_id):
+    logger.debug(f"Adding recruit role to {member.name}")
     role = guild.get_role(role_id)
     await member.add_roles(role)
+
+
+async def check_active_threads(member, guild, channel_id):
+    logger.debug(f"Checking active threads for {member.name}")
+    channel = guild.get_channel(channel_id)
+    thread = discord.utils.find(lambda t: member.name in t.name, channel.threads)
+    if thread:
+        return thread.id
+    return None
+
 
 
 async def create_recruitment_thread(member, guild, channel_id, recruiter_role_id):
@@ -41,14 +52,18 @@ class RecruitButtonView(discord.ui.View):
             await interaction.response.send_message("You can not make this decision for others.", ephemeral=True)
             return
 
-        logger.debug(f"Adding recruit role to {self.member.name}")
         await add_recruit_role(self.member, interaction.guild, self.settings.recruit_role)
-        await create_recruitment_thread(
-            self.member,
-            interaction.guild,
-            self.settings.recruitment_thread_channel,
-            self.settings.recruiter_role
-        )
+        existing_thread = await check_active_threads(self.member, interaction.guild, self.settings.recruitment_thread_channel)
+        if existing_thread:
+            channel = interaction.guild.get_channel(existing_thread)
+            await channel.send(f"{self.member.mention} here is your existing recruitment thread!")
+        else:
+            await create_recruitment_thread(
+                self.member,
+                interaction.guild,
+                self.settings.recruitment_thread_channel,
+                self.settings.recruiter_role
+            )
 
         await interaction.response.edit_message(view=None)
 
@@ -113,7 +128,7 @@ class HRApps(commands.Cog):
             return
 
         logger.debug(f"Message type: {message.type}")
-        if message.channel == message.guild.get_channel(self.settings.recruitment_thread_channel) and message.type == discord.MessageType.thread_created:
+        if message.type == discord.MessageType.thread_created and message.channel == message.guild.get_channel(self.settings.recruitment_thread_channel):
             logger.debug(f"Found recruitment thread, deleting creation message for privacy. {message.id}")
             await message.delete()
             return
@@ -121,13 +136,21 @@ class HRApps(commands.Cog):
     @commands.slash_command(name="recruit_me", description="Begin the recruitment process.", guild_ids=get_all_servers())
     async def recruit_me(self, ctx):
         await add_recruit_role(ctx.author, ctx.guild, self.settings.recruit_role)
+        existing_thread = await check_active_threads(ctx.author, ctx.guild, self.settings.recruitment_thread_channel)
+        if existing_thread:
+            print(existing_thread)
+            channel = await self.bot.fetch_channel(existing_thread)
+            print(channel)
+            await channel.send(f"{ctx.author.mention} here is your existing recruitment thread!")
+            return await ctx.respond("You have already started the recruitment process.\n"
+                                     "Please check for your recruitment thread.", ephemeral=True)
         await create_recruitment_thread(
             ctx.author,
             ctx.guild,
             self.settings.recruitment_thread_channel,
             self.settings.recruiter_role
         )
-        await ctx.respond("Your recruitment thread has been created.", ephemeral=True)
+        return await ctx.respond("Your recruitment thread has been created.", ephemeral=True)
 
 
 
