@@ -121,13 +121,6 @@ class HRApps(commands.Cog):
         except Exception as e:
             logger.error(f"Error listening for HRApp settings updates: {e}")
 
-    @commands.slash_command(name="welcome_message", description="Display the welcome message.", guild_ids=get_all_servers())
-    async def welcome_message(self, ctx):
-        return await ctx.respond(
-            self.settings.welcome_message,
-            ephemeral=True
-        )
-
     @commands.Cog.listener()
     async def on_member_join(self, member):
         logger.debug(f"Member joined the server.")
