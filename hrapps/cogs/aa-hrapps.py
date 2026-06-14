@@ -47,16 +47,17 @@ class RecruitButtonView(discord.ui.View):
     def __init__(self, member=None):
         super().__init__(timeout=None)
         self.member = member
-        self.settings = HRAppDiscordSettings.get_solo()
 
     @discord.ui.button(label="Recruit Me", style=discord.ButtonStyle.green)
     async def recruit_button(self, button, interaction):
         if interaction.user != self.member:
             await interaction.response.send_message("You can not make this decision for others.", ephemeral=True)
             return
+        settings = HRAppDiscordSettings.get_solo()
 
         await add_recruit_role(self.member, interaction.guild, self.settings.recruit_role)
         existing_thread = await check_active_threads(self.member, interaction.guild, self.settings.recruitment_thread_channel)
+        existing_thread = await check_active_threads(self.member, interaction.guild, settings.recruitment_thread_channel)
         if existing_thread:
             channel = interaction.guild.get_channel(existing_thread)
             await channel.send(f"{self.member.mention} here is your existing recruitment thread!")
@@ -64,8 +65,8 @@ class RecruitButtonView(discord.ui.View):
             await create_recruitment_thread(
                 self.member,
                 interaction.guild,
-                self.settings.recruitment_thread_channel,
-                self.settings.recruiter_role
+                settings.recruitment_thread_channel,
+                settings.recruiter_role
             )
 
         await interaction.response.edit_message(view=None)
