@@ -1,6 +1,10 @@
+import asyncio
+import json
 from collections import defaultdict
 
 import discord.ui
+import redis.asyncio as aioredis
+from allianceauth.utils.cache import get_redis_client
 from aadiscordbot.utils.auth import get_auth_user
 from allianceauth.services.hooks import get_extension_logger
 from aadiscordbot.app_settings import get_all_servers, get_site_url
@@ -25,7 +29,6 @@ async def check_active_threads(member, guild, channel_id):
     if thread:
         return thread.id
     return None
-
 
 
 async def create_recruitment_thread(member, guild, channel_id, recruiter_role_id):
@@ -88,6 +91,42 @@ class HRApps(commands.Cog):
     def __init__(self, bot):
         self.settings = HRAppDiscordSettings.get_solo()
         self.bot = bot
+
+        redis_client = get_redis_client()
+        rkwargs = redis_client.connection_pool.connection_kwargs
+        rkwargs["decode_responses"] = True
+        rkwargs.pop("parser_class", None)
+        rkwargs.pop("password", None)
+
+        self.redis_client = aioredis.Redis(**rkwargs)
+        self.pubsub = self.redis_client.pubsub()
+        self.listener_task = self.bot.loop.create_task(self.listen_for_messages())
+        logger.debug("Initialized HRApp cog.")
+
+    async def listen_for_messages(self):
+        await self.pubsub.subscribe("hrapp_discord_settings")
+        logger.debug("Listening for HRApp settings updates.")
+
+        try:
+            async for message in self.pubsub.listen():
+                if message["type"] == "message":
+                    logger.debug("Received redis message")
+                    data = json.loads(message["data"])
+
+                    if data.get("action") == "settings_updated":
+                        logger.debug("HRApp settings updated, updating local settings.")
+                        await self.update_settings()
+        except asyncio.CancelledError:
+            logger.debug("Cancelled listening for HRApp settings updates.")
+        except Exception as e:
+            logger.error(f"Error listening for HRApp settings updates: {e}")
+
+    @commands.slash_command(name="welcome_message", description="Display the welcome message.", guild_ids=get_all_servers())
+    async def welcome_message(self, ctx):
+        return await ctx.respond(
+            self.settings.welcome_message,
+            ephemeral=True
+        )
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -158,7 +197,6 @@ class HRApps(commands.Cog):
             self.settings.recruiter_role
         )
         return await ctx.respond("Your recruitment thread has been created.", ephemeral=True)
-
 
 
 def setup(bot):
