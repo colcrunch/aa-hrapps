@@ -9,7 +9,6 @@ from aadiscordbot.utils.auth import get_auth_user
 from allianceauth.services.hooks import get_extension_logger
 from aadiscordbot.app_settings import get_all_servers, get_site_url
 from aadiscordbot.cogs.utils.exceptions import NotAuthenticated
-from discord import SlashCommandGroup
 from discord.ext import commands
 from hrapps.models import HRAppDiscordSettings
 
@@ -55,8 +54,7 @@ class RecruitButtonView(discord.ui.View):
             return
         settings = HRAppDiscordSettings.get_solo()
 
-        await add_recruit_role(self.member, interaction.guild, self.settings.recruit_role)
-        existing_thread = await check_active_threads(self.member, interaction.guild, self.settings.recruitment_thread_channel)
+        await add_recruit_role(self.member, interaction.guild, settings.recruit_role)
         existing_thread = await check_active_threads(self.member, interaction.guild, settings.recruitment_thread_channel)
         if existing_thread:
             channel = interaction.guild.get_channel(existing_thread)
