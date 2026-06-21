@@ -39,7 +39,7 @@ async def create_recruitment_thread(member, guild, channel_id, recruiter_role_id
         type=discord.ChannelType.public_thread
     )
     logger.debug(f"Sending recruiter notification message in thread for {member.name}")
-    await thread.send(f"ATTN: {recruiter_role.mention}\n{member.mention} has indicated they are interested in joining.")
+    await thread.send(f"*ATTN: {recruiter_role.mention}*\n\n{member.mention} has indicated they are interested in joining.")
 
 
 class RecruitButtonView(discord.ui.View):
