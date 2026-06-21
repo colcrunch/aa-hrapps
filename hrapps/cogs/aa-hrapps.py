@@ -113,10 +113,10 @@ class HRApps(commands.Cog):
 
         self.redis_client = aioredis.Redis(**rkwargs)
         self.pubsub = self.redis_client.pubsub()
-        self.listener_task = self.bot.loop.create_task(self.listen_for_messages())
+        self.listener_task = self.bot.loop.create_task(self.listen_to_mq())
         logger.debug("Initialized HRApp cog.")
 
-    async def listen_for_messages(self):
+    async def listen_to_mq(self):
         await self.pubsub.subscribe("hrapp_discord_settings")
         logger.debug("Listening for HRApp settings updates.")
 
