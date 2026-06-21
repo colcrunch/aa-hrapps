@@ -134,6 +134,9 @@ class HRApps(commands.Cog):
         except Exception as e:
             logger.error(f"Error listening for HRApp settings updates: {e}")
 
+    async def update_settings(self):
+        self.settings = HRAppDiscordSettings.get_solo()
+
     @commands.Cog.listener()
     async def on_member_join(self, member):
         logger.debug(f"Member joined the server.")
