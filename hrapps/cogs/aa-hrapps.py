@@ -43,12 +43,25 @@ async def create_recruitment_thread(member, guild, channel_id, recruiter_role_id
 
 
 class RecruitButtonView(discord.ui.View):
-    def __init__(self, member=None):
+    def __init__(self, bot, member=None):
         super().__init__(timeout=None)
+        self.bot = bot
         self.member = member
 
-    @discord.ui.button(label="Recruit Me", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Recruit Me", style=discord.ButtonStyle.green, custom_id="hrapps_recruit_button")
     async def recruit_button(self, button, interaction):
+        if self.member is None:
+            # If the bot is restarted then existing views will lose the member attribute. In this case we don't have a
+            # reliable way to know who the user is that the welcome message was targeting as the user mention may not
+            # be the first one.
+            command = self.bot.get_application_command("recruit_me")
+            await interaction.response.edit_message(view=None)
+            await interaction.followup.send(
+                f"Something went wrong processing your request. "
+                f"Please use the </recruit_me:{command.id}> command instead.",
+                ephemeral=True
+            )
+            return
         if interaction.user != self.member:
             await interaction.response.send_message("You can not make this decision for others.", ephemeral=True)
             return
@@ -70,14 +83,15 @@ class RecruitButtonView(discord.ui.View):
         await interaction.response.edit_message(view=None)
 
 
-    @discord.ui.button(label="No Thanks")
+    @discord.ui.button(label="No Thanks", custom_id="hrapps_cancel_button")
     async def cancel_button(self, button, interaction):
         if interaction.user != self.member:
             await interaction.response.send_message("You can not make this decision for others.", ephemeral=True)
             return
+        command = self.bot.get_application_command("recruit_me")
         await interaction.response.edit_message(view=None)
         await interaction.followup.send(
-            "If you change your mind later, simply run the /recruit_me command.",
+            f"If you change your mind later, simply run the </recruit_me:{command.id}> command.",
             ephemeral=True
         )
 
@@ -141,7 +155,7 @@ class HRApps(commands.Cog):
         logger.debug(f"Welcoming user {member.name}")
         logger.debug(f"Use Recruitment Threads on? {self.settings.use_recruitment_threads}")
         welcome_channel = self.bot.get_channel(self.settings.welcome_channel)
-        recruit_view = RecruitButtonView(member) if self.settings.use_recruitment_threads else None
+        recruit_view = RecruitButtonView(self.bot, member) if self.settings.use_recruitment_threads else None
         await welcome_channel.send(
             self.settings.welcome_message.format_map(
                 defaultdict(
@@ -163,6 +177,11 @@ class HRApps(commands.Cog):
             logger.debug(f"Found recruitment thread, deleting creation message for privacy. {message.id}")
             await message.delete()
             return
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        logger.debug("HRApp cog is ready.")
+        self.bot.add_view(RecruitButtonView(self.bot))
 
     @commands.slash_command(name="recruit_me", description="Begin the recruitment process.", guild_ids=get_all_servers())
     async def recruit_me(self, ctx):
