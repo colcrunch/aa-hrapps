@@ -1,0 +1,54 @@
+<div class="card bg-secondary" style="margin-bottom: 3px;" draggable="true" data-field="image" {% if id %}id="question_{{ id }}"{% endif %}>
+        <div class="card-header" id="HEAD">
+            <div class="card-title mb-0">
+                Image Field
+                <button type="button" class="btn btn-xs btn-danger float-end ms-1" onClick="removeField(this.closest('.card'))">
+                    <span class="fa fa-times"></span>
+                </button>
+            </div>
+        </div>
+        <div class="card-body" id="BODY">
+            <div class="container-fluid">
+                <div class="row" id="ROW">
+                    <div class="form-group">
+                        <label class="form-label" for="question">Question</label>
+                        <input type="text" class="form-control" id="question" value="{{ field.question }}" required>
+                        <div class="invalid-feedback">
+                            This field is required. Please click the delete button to remove this field.
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group" style="display: flex; justify-content: flex-end;">
+                        <input type="checkbox" class="form-check-input" id="required" style="margin-right: 3px;" {% if field.required %}checked{% endif %}>
+                        <label class="form-label" for="required">Required?</label>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        Image Field Options
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="checkbox" class="form-check-input" id="allow_multiple" {% if field.allowMultiple %}checked{% endif %}>
+                            <label class="form-label" for="allow_multiple">Allow Multiple Images?</label>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label class="form-label" for="attachment_limit">Maximum number of images</label>
+                            <input type="number" class="form-control" id="attachment_limit" value="{{ field.attachmentLimit }}" step="1" placeholder="Maximum number of images">
+                            <small class="form-text text-muted">
+                                Only applies when multiple images are allowed.
+                                Leave blank or set to 0 for no limit.
+                            </small>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <input type="checkbox" class="form-check-input" id="allow_updates" {% if field.allowUpdates %}checked{% endif %}>
+                            <label class="form-label" for="allow_updates">Allow images to be uploaded after submission?</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
