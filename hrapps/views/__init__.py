@@ -8,10 +8,21 @@ logger = get_extension_logger(__name__)
 
 
 class Field:
-    def __init__(self, type, question, options=None, required=False):
+    def __init__(self,
+                 type,
+                 question,
+                 options=None,
+                 required=False,
+                 allowMultiple=None,
+                 allowUpdates=None,
+                 attachmentLimit=None
+                 ):
         self.type = type
         self.question = question
         self.required = required
+        self.allowMultiple = allowMultiple
+        self.allowUpdates = allowUpdates
+        self.attachmentLimit = attachmentLimit
         if options is not None:
             self.options = tuple(options)
         else:
@@ -22,7 +33,10 @@ class Field:
             "type": self.type,
             "question": self.question,
             "required": self.required,
-            "options": self.options
+            "options": self.options,
+            "allowMultiple": self.allowMultiple,
+            "allowUpdates": self.allowUpdates,
+            "attachmentLimit": self.attachmentLimit,
         }
 
 class ResponseItem:
