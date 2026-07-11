@@ -1,0 +1,5 @@
+<div class="form-field">
+    <label for="question_{{ id }}" class="h5 {% if field.required %}required-field{% endif %}">{{ field.question }}</label>
+    <input type="file" class="form-control" accept="image/*" id="question_{{ id }}" onchange="previewFile(this)" {% if field.required %} required {% endif %} {% if disabled %} disabled {% endif %} {% if field.allowMultiple %}multiple{% endif %}>
+    <div class="image-preview" id="question_{{ id }}_preview" style="margin-top: 5px;"></div>
+</div>
