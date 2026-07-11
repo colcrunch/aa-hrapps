@@ -43,6 +43,7 @@ dynamic = [
 ]
 dependencies = [
     "allianceauth>=4",
+    "pillow>=12.3.0"
 ]
 
 optional-dependencies.discordbot = [

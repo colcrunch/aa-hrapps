@@ -137,3 +137,12 @@ class ResponseComment(models.Model):
             ("create_comment", "Can comment on form responses."),       # Can create AND view
             ("view_comment", "Can view comments on form responses."),   # Can view but NOT create
         )
+
+
+class Attachment(models.Model):
+    response = models.ForeignKey(FormResponse, on_delete=models.CASCADE, related_name="attachments")
+    file = models.ImageField(upload_to="hrapps/attachments/")
+    question_id = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        default_permissions = (())
