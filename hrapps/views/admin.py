@@ -397,6 +397,7 @@ def update_discord(request):
     return redirect("hradmin:dashboard")
 
 
+@permissions_required(("hrapps.manage_hrapps",))
 def update_discord_welcome_settings(request):
     data = request.POST
     welcomeEnabled = data.get("enabled")
@@ -426,6 +427,7 @@ def update_discord_welcome_settings(request):
     return True
 
 
+@permissions_required(("hrapps.manage_hrapps",))
 def update_discord_recruitment_settings(request):
     data = request.POST
     recruitmentEnabled = data.get("enabled")
