@@ -225,6 +225,7 @@ function buildFormJson() {
     }
 
     const questions = getQuestions();
+    let questionJson = {}
 
     for (let i = 0; i < questions.length; i++) {
         const question = questions[i];
@@ -232,10 +233,26 @@ function buildFormJson() {
         const required = question.querySelector("[id='required']").checked;
         const fieldType = question.closest("[id^='question_']").getAttribute("data-field");
 
-        const questionJson = {
-            type: fieldType,
-            question: questionField.value,
-            required: required,
+        if (fieldType === "image"){
+            const allowMultiple = question.querySelector("[id='allow_multiple']").checked;
+            const attachmentLimit = question.querySelector("[id='attachment_limit']").value;
+            const allowUpdates = question.querySelector("[id='allow_updates']").checked;
+
+            questionJson = {
+                type: fieldType,
+                question: questionField.value,
+                required: required,
+                allowMultiple: allowMultiple,
+                attachmentLimit: attachmentLimit === '' ? 0 : parseInt(attachmentLimit),
+                allowUpdates: allowUpdates,
+            }
+        }
+        else {
+            questionJson = {
+                type: fieldType,
+                question: questionField.value,
+                required: required,
+            }
         }
 
         if (optionTypes.includes(fieldType)) {
