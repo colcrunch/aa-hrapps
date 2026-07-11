@@ -263,5 +263,34 @@
             }, 1000);
         }
 
+        function previewFile(element) {
+            console.log("Previewing file...");
+            console.log(element);
+            const sourceQuestion = element.id;
+            const previewContainer = document.getElementById(`${sourceQuestion}_preview`);
+            previewContainer.innerHTML = "";
+
+            const files = Array.from(element.files);
+
+            files.forEach(file => {
+                const fileUrl = URL.createObjectURL(file);
+
+                const imgCard = document.createElement("div");
+                imgCard.classList.add("card", "img-fluid");
+                imgCard.style.float = "inline-start";
+                imgCard.style.marginRight = "10px";
+
+                const img = document.createElement("img");
+                img.src = fileUrl;
+                img.alt = file.name;
+                img.style.height = "128px";
+                imgCard.appendChild(img);
+
+                imgCard.addEventListener("load", () => { URL.revokeObjectURL(fileUrl) });
+
+                previewContainer.appendChild(imgCard);
+            })
+        }
+
     </script>
 {% endblock %}
