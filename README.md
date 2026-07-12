@@ -7,6 +7,24 @@ A WIP Recruitment tool.
 * Corptools and memberaudit integration
 * Doscordbot integration
 
+## Installation
+
+If you are running nginx add the following to your site's nginx config. 
+
+```
+location /media/ {
+    alias /var/www/myauth/media/;
+}
+```
+
+Add the following to your `local.py`
+
+```py
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/var/www/myauth/media/"
+
+```
+
 ## Permissions
 
 | Permission                         | Description                                                         |
