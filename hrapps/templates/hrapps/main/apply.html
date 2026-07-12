@@ -124,6 +124,53 @@
             return true;
         }
 
+        function validateFileInput(elem) {
+            const input = elem.querySelector("input")
+            let elemValid = input.checkValidity()
+            let tooManyFiles = false;
+
+            if (input.multiple) {
+                let fileLimit = input.getAttribute("data-limit")
+                if (fileLimit === "" || fileLimit === null) {
+                    fileLimit = 0;
+                } else {
+                    fileLimit = parseInt(fileLimit);
+                }
+                console.log(fileLimit);
+
+                if (fileLimit > 0) {
+                    const filesCount = input.files.length;
+                    if (filesCount > fileLimit) {
+                        elemValid = false;
+                        tooManyFiles = true;
+                    }
+                }
+            }
+
+            if (!elemValid) {
+                input.classList.add("invalid-field");
+                const invalidFeedback = elem.querySelector(".invalid-feedback");
+                invalidFeedback.style.display = "block";
+                if (tooManyFiles) {
+                    invalidFeedback.innerHTML = "You can only upload a maximum of " + input.getAttribute("data-limit") + " files."
+                }
+                else {
+                    invalidFeedback.innerHTML = "This is a required field."
+                }
+
+                return false;
+            }
+
+            if (input.classList.contains("invalid-field")) {
+                input.classList.remove("invalid-field");
+                const invalidFeedback = elem.querySelector(".invalid-feedback");
+                invalidFeedback.style.display = "none";
+                invalidFeedback.innerHTML = "This is a required field.";
+            }
+
+            return true;
+        }
+
         function customReportValidity(elem, type) {
             let valid = false;
 
@@ -139,6 +186,9 @@
                     break;
                 case "text-area":
                     valid = validateTextArea(elem);
+                    break;
+                case "image":
+                    valid = validateFileInput(elem);
                     break;
                 default:
                     break;
