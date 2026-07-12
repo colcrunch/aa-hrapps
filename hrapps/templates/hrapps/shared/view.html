@@ -140,6 +140,16 @@
                                         <li>{{ answer }}</li>
                                     {% endfor %}
                                     </ul>
+                                {% elif response.has_attachments %}
+                                    <div class="image-preview">
+                                    {% for attachment in attachments|filter_by_question_id:forloop.counter %}
+                                        <div class="card img-fluid">
+                                            <a href="{{ attachment.file.url }}" data-toggle="lightbox">
+                                                <img src="{{ attachment.file.url }}" class="card-img-full" style="height: 128px; width: auto;">
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
                                 {% else %}
                                     <p class="card-text">{{ response.answer|linebreaksbr|urlize }}</p>
                                 {% endif %}
@@ -168,6 +178,7 @@
 {% endblock %}
 
 {% block extra_javascript %}
+    {% include "hrapps/bundles/lightbox-js.html" %}
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", () => {
            const timeElements = document.querySelectorAll(".local-time");
