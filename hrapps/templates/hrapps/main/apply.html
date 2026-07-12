@@ -232,6 +232,10 @@
                     }
                     answers.push(answer);
                 }
+                else if (question_type === "image") {
+                    const filesLen = question.querySelector("[id^=question_]").files.length;
+                    answers.push({num_files: filesLen});
+                }
                 else {
                     answers.push(question.querySelector("[id^=question_]").value);
                 }
