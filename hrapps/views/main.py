@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 
 from . import Field, get_application_context, add_comment, add_reply
-from hrapps.models import FormResponse, Form
+from hrapps.models import FormResponse, Form, Attachment
 
 logger = get_extension_logger(__name__)
 
@@ -39,10 +39,17 @@ def user_has_active_application(user, form):
 def apply(request, form_id):
     form = Form.objects.get(pk=form_id)
 
+    fields = []
+    for field in form.fields:
+        fields.append(Field(**field))
+
     if request.method == "POST":
-        body = request.body.decode("utf-8")
+        logger.debug(request.FILES)
+        body = request.POST.get("application")
         logger.debug(body)
         body_json = json.loads(body)
+
+        has_files = bool(request.FILES)
 
         # Check if the user already has an application for this form or corp
         if user_has_active_application(request.user, form):
@@ -50,19 +57,45 @@ def apply(request, form_id):
             return HttpResponse(status=403)
 
         try:
-            FormResponse.objects.create(form=form, user=request.user, response=body_json)
-            return HttpResponse(status=201)
+            resp = FormResponse.objects.create(form=form, user=request.user, response=body_json)
+            if not has_files:
+                return HttpResponse(status=201)
         except Exception as e:
             logger.error(e)
             return HttpResponse(status=500)
 
+        if has_files:
+            logger.debug(request.FILES)
+            file_fields = {field_id: field for field_id, field in enumerate(fields) if field.type == "image"}
+            for file_field in request.FILES.keys():
+                files = request.FILES.getlist(file_field)
+                field_id = int(file_field.split("_")[1])-1
+
+                if file_fields[field_id].attachmentLimit:
+                    if len(files) > file_fields[field_id].attachmentLimit:
+                        return HttpResponse(
+                            status=400,
+                            content=f"You cannot upload more than {file_fields[field_id].attachmentLimit} "
+                                    f"files for the {file_fields[field_id].question} field"
+                        )
+
+            for file_field in request.FILES.keys():
+                files = request.FILES.getlist(file_field)
+                field_id = int(file_field.split("_")[1])
+
+                for file in files:
+                    try:
+                        Attachment.objects.create(response=resp, file=file, question_id=field_id)
+                    except Exception as e:
+                        resp.delete()
+                        logger.error(e)
+                        return HttpResponse(status=500)
+
+        return HttpResponse(status=201)
+
     if user_has_active_application(request.user, form):
         messages.error(request, "You already applied for this form.")
         return redirect("hrapps:dashboard")
-
-    fields = []
-    for field in form.fields:
-        fields.append(Field(**field))
 
     return render(request,
                   "hrapps/main/apply.html",
