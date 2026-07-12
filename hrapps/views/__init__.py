@@ -40,9 +40,10 @@ class Field:
         }
 
 class ResponseItem:
-    def __init__(self, question, answer):
+    def __init__(self, question, answer, has_attachments=False):
         self.question = question
         self.answer = answer
+        self.has_attachments = has_attachments
 
     @property
     def answer_is_list(self):
@@ -106,10 +107,14 @@ def get_application_context(request, application_id, admin=False):
 
     response_items = []
     for item in application.response["questions"]:
-        response_items.append(ResponseItem(item["question"], item["answer"]))
+        if "attachments" in item.keys():
+            response_items.append(ResponseItem(item["question"], item["answer"], True))
+        else:
+            response_items.append(ResponseItem(item["question"], item["answer"]))
 
     corptools = get_corptools_chars(characters) if "corptools" in settings.INSTALLED_APPS else None
     memberaudit = get_memberaudit_chars(characters) if "memberaudit" in settings.INSTALLED_APPS else None
+    attachments = application.attachments.all()
 
     return {
       "application": application,
@@ -120,6 +125,7 @@ def get_application_context(request, application_id, admin=False):
       "corptools": corptools,
       "memberaudit": memberaudit,
       "admin": admin,
+      "attachments": attachments,
     }
 
 def add_comment(request, response_id):
