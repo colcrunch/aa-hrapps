@@ -280,15 +280,28 @@
             console.log("Form valid.");
             console.log("Submitting application...");
             const applicationJson = buildApplicationJson();
-
             console.log(applicationJson);
+
+            const formData = new FormData();
+            formData.append("application", JSON.stringify(applicationJson));
+
+            const fileInputs = document.querySelectorAll("input[type='file']");
+
+            for (let i = 0; i < fileInputs.length; i++) {
+                const id = fileInputs[i].id;
+                const files = fileInputs[i].files;
+
+                for (let j = 0 ; j < files.length; j++) {
+                    formData.append(id, files[j]);
+                }
+            }
+
             fetch(window.location.href, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     "X-CSRFToken": "{{ csrf_token }}",
                 },
-                body: JSON.stringify(applicationJson)
+                body: formData
             })
             .then(response => {
                 console.log(`Response Status: ${response.status}`);
