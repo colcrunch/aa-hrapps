@@ -353,13 +353,14 @@
 
                 const imgCard = document.createElement("div");
                 imgCard.classList.add("card", "img-fluid");
-                imgCard.style.float = "inline-start";
                 imgCard.style.marginRight = "10px";
 
                 const img = document.createElement("img");
+                img.classList.add("card-img-full");
                 img.src = fileUrl;
                 img.alt = file.name;
                 img.style.height = "128px";
+                img.style.width = "auto";
                 imgCard.appendChild(img);
 
                 imgCard.addEventListener("load", () => { URL.revokeObjectURL(fileUrl) });

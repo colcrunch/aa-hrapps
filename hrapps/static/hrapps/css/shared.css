@@ -59,3 +59,13 @@ input.invalid-field:focus, textarea.invalid-field:focus {
 .accordion-button:not(.collapsed)::after {
     background-image: var(--bs-accordion-btn-icon);
 }
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 5px;
+}
+
+.card-img-full {
+    border-radius: var(--bs-card-border-radius);
+}
