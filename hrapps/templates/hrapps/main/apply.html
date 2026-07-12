@@ -206,9 +206,9 @@
         }
 
         function submitApplication() {
+            console.log("Validating form...");
             const validForm = validateForm();
 
-            console.log("Validating form...");
             if (!validForm) {
                 console.log("Form invalid. Please correct errors and try again.")
                 return;
