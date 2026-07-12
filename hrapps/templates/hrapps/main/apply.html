@@ -253,7 +253,16 @@
                 const question_text = question.querySelector("label").innerText;
                 const question_answer = answers[i];
 
-                applicationJson.questions.push({question: question_text, answer: question_answer});
+                if (typeof question_answer === 'object') {
+                    applicationJson.questions.push({
+                        question: question_text,
+                        answer: "",
+                        attachments: question_answer.num_files
+                    });
+                }
+                else {
+                    applicationJson.questions.push({question: question_text, answer: question_answer});
+                }
             }
 
             return applicationJson;
