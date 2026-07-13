@@ -38,6 +38,7 @@
 {% endblock %}
 
 {% block extra_javascript %}
+    {% include "hrapps/bundles/lightbox-js.html" %}
     <script>
         function getQuestions() {
             const questions = [];
@@ -359,11 +360,19 @@
                 img.classList.add("card-img-full");
                 img.src = fileUrl;
                 img.alt = file.name;
+                img.dataset.toggle = "lightbox";
+                img.dataset.type = "image";
+                img.dataset.src = fileUrl;
                 img.style.height = "128px";
                 img.style.width = "auto";
-                imgCard.appendChild(img);
 
-                imgCard.addEventListener("load", () => { URL.revokeObjectURL(fileUrl) });
+                img.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const lightbox = new Lightbox(img);
+                    lightbox.show();
+                });
+
+                imgCard.appendChild(img);
 
                 previewContainer.appendChild(imgCard);
             })
