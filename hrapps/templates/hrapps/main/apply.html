@@ -376,6 +376,18 @@
 
                 previewContainer.appendChild(imgCard);
             })
+            if (previewContainer.parentElement.querySelector(".text-muted") === null) {
+                const selectNote = element.multiple ? "a different set of files" : "a different file";
+                const noteElement = document.createElement("p");
+                noteElement.classList.add("text-muted");
+                noteElement.innerHTML = "Click on an image to view it in full size.\n" +
+                    "To change files, click on \"Choose files\" again and " + selectNote + ".";
+                previewContainer.parentElement.appendChild(noteElement);
+            }
+            else if (element.files.length === 0) {
+                previewContainer.parentElement.querySelector(".text-muted").remove();
+            }
+
         }
 
     </script>
