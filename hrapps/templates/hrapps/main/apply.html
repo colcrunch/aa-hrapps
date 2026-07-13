@@ -39,6 +39,7 @@
 
 {% block extra_javascript %}
     {% include "hrapps/bundles/lightbox-js.html" %}
+    <!--suppress JSUnresolvedReference -->
     <script>
         function getQuestions() {
             const questions = [];
@@ -205,7 +206,6 @@
             for (let i =0; i < questions.length; i++) {
                 let question = questions[i];
                 let question_type = question.getAttribute("data-fieldtype");
-                let question_text = question.querySelector("label");
 
                 const questionValid = customReportValidity(question, question_type)
                 validForm = validForm && questionValid
@@ -310,7 +310,7 @@
                     console.log("Application submitted successfully.");
                     successNotification();
                 }
-                else if (response.status == 403) {
+                else if (response.status === 403) {
                     console.log("Application already submitted.");
                     window.location.href = "{% url "hrapps:dashboard" %}";
                 }
@@ -330,7 +330,7 @@
             let timeLeft = 11;
 
             const timer = setInterval(() => {
-                countdownP.innerHTML = timeLeft - 1;
+                countdownP.innerHTML = `${timeLeft - 1}`;
                 timeLeft--;
                 if (timeLeft === 0) {
                     clearInterval(timer);
@@ -381,8 +381,8 @@
                 const noteElement = document.createElement("p");
                 noteElement.id = `${sourceQuestion}_note`;
                 noteElement.classList.add("text-muted");
-                emElement = document.createElement("em");
-                smallElement = document.createElement("small");
+                const emElement = document.createElement("em");
+                const smallElement = document.createElement("small");
                 smallElement.innerHTML = "Click on an image to view it in full size.\n" +
                     "To change files, click on \"Choose Files\" again and select " + selectNote + ".";
                 noteElement.appendChild(emElement);
