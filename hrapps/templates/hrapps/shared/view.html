@@ -251,6 +251,13 @@
                uploadForm.appendChild(hiddenInput);
             });
 
+            uploadOffcanvas.addEventListener('hide.bs.offcanvas', (event) => {
+                const uploadForm = document.getElementById("uploadForm");
+                const fileinput = document.getElementById("fileInput");
+                uploadForm.reset();
+                fileinput.dispatchEvent(new Event("change"));
+            })
+
             function previewFile(element) {
                 console.log("Previewing file...");
                 console.log(element);
