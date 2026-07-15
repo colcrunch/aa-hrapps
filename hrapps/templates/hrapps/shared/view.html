@@ -293,7 +293,7 @@
 
                     previewContainer.appendChild(imgCard);
                 })
-                if (previewContainer.parentElement.querySelector("#preview_note") === null) {
+                if (previewContainer.parentElement.querySelector("#preview_note") === null && element.files.length !== 0) {
                     const selectNote = element.multiple ? "a different set of files" : "a different file";
                     const noteElement = document.createElement("p");
                     noteElement.id = "preview_note";
