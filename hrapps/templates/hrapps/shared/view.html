@@ -132,7 +132,7 @@
                         <div class="card mb-2 bg-secondary">
                             <div class="card-header">
                                 <h5 class="card-title" style="display: inline-block;">{{ response.question }}</h5>
-                                {% if response.allowUpdates and request.user == application.user %}
+                                {% if response.allowUpdates and request.user == application.user and not admin %}
                                     <div class="float-end">
                                     {% if response.allowMultiple and response.attachmentLimit == 0 %}
                                         {% include "hrapps/main/partials/view/upload_button.html" with question_id=forloop.counter multiple=response.allowMultiple attachLimit=response.attachmentLimit %}
