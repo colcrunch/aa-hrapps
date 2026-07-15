@@ -1,0 +1,20 @@
+<div class="offcanvas offcanvas-bottom offcanvas-auto-height" id="uploadOffcanvasBottom" tabindex="-1" aria-labelledby="uploadOffcanvasBottomLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="uploadOffcanvasBottomLabel">Upload Images</h5>
+        <button type="button" class="btn-close" id="offcanvasClose" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url "hrapps:view" application.id %}" id="uploadForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="file">Upload Images</label>
+            <input type="file" name="file" id="fileInput" class="form-control mb-2" onChange="previewFile(this)">
+            <div id="note_container">
+                <div class="image-preview" id="image_preview">
+
+                </div>
+            </div>
+            <br>
+            <button class="btn btn-primary" type="submit">Upload</button>
+        </form>
+    </div>
+</div>

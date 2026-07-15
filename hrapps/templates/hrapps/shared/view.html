@@ -131,7 +131,18 @@
                     {% for response in responses %}
                         <div class="card mb-2 bg-secondary">
                             <div class="card-header">
-                                <h5 class="card-title">{{ response.question }}</h5>
+                                <h5 class="card-title" style="display: inline-block;">{{ response.question }}</h5>
+                                {% if response.allowUpdates and request.user == application.user %}
+                                    <div class="float-end">
+                                    {% if response.allowMultiple and response.attachmentLimit == 0 %}
+                                        {% include "hrapps/main/partials/view/upload_button.html" with question_id=forloop.counter multiple=response.allowMultiple attachLimit=response.attachmentLimit %}
+                                    {% elif response.allowMultiple and attachments|filter_by_question_id:forloop.counter|length < response.attachmentLimit %}
+                                        {% include "hrapps/main/partials/view/upload_button.html" with question_id=forloop.counter multiple=response.allowMultiple attachLimit=response.attachmentLimit %}
+                                    {% elif not response.allowMultiple and attachments|filter_by_question_id:forloop.counter|length == 0 %}
+                                        {% include "hrapps/main/partials/view/upload_button.html" with question_id=forloop.counter multiple=response.allowMultiple attachLimit=response.attachmentLimit %}
+                                    {% endif %}
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="card-body">
                                 {% if response.answer_is_list %}
@@ -168,8 +179,8 @@
 
     {% if not admin %}
         {% include "hrapps/main/partials/view/withdraw_confirm_modal.html" %}
-    {% endif %}
-    {% if admin %}
+        {% include "hrapps/main/partials/view/upload_offcanvas.html" %}
+    {% elif admin %}
         {% include "hrapps/admin/partials/view/approve_confirm_modal.html" %}
         {% include "hrapps/admin/partials/view/pend_confirm_modal.html" %}
         {% include "hrapps/admin/partials/view/reject_confirm_modal.html" %}
@@ -202,5 +213,97 @@
                 el.style.width = widthMax+"px";
            });
         });
+
+        {% if not admin %}
+            const uploadOffcanvas = document.getElementById('uploadOffcanvasBottom');
+
+            uploadOffcanvas.addEventListener('show.bs.offcanvas', (event) => {
+               const buttonData = event.relatedTarget.dataset;
+
+               if (document.getElementById("uploadLimitNote")) {
+                   document.getElementById("uploadLimitNote").remove();
+               }
+
+               const questionID = buttonData.questionId;
+               const multiple = buttonData.multiple;
+               const attachLimit = parseInt(buttonData.limit);
+
+               if (multiple && attachLimit !== 0) {
+                   const uploadForm = document.getElementById("uploadForm");
+                   const small = document.createElement("small");
+                   const em = document.createElement("em");
+                   em.textContent = `Limit ${attachLimit} total file${attachLimit > 1 ? "s" : ""}`;
+                   small.appendChild(em);
+                   uploadForm.before(small);
+                   small.classList.add("text-muted");
+                   small.classList.add("float-end");
+                   small.id = "uploadLimitNote";
+               }
+
+               const input = document.getElementById("fileInput");
+               input.multiple = multiple;
+
+               const uploadForm = document.getElementById("uploadForm");
+               const hiddenInput = document.createElement("input");
+               hiddenInput.type = "hidden";
+               hiddenInput.name = "question_id";
+               hiddenInput.value = questionID;
+               uploadForm.appendChild(hiddenInput);
+            });
+
+            function previewFile(element) {
+                console.log("Previewing file...");
+                console.log(element);
+                const previewContainer = document.getElementById("image_preview");
+                previewContainer.innerHTML = "";
+
+                const files = Array.from(element.files);
+
+                files.forEach(file => {
+                    const fileUrl = URL.createObjectURL(file);
+
+                    const imgCard = document.createElement("div");
+                    imgCard.classList.add("card", "img-fluid");
+                    imgCard.style.marginRight = "10px";
+
+                    const img = document.createElement("img");
+                    img.classList.add("card-img-full");
+                    img.src = fileUrl;
+                    img.alt = file.name;
+                    img.dataset.toggle = "lightbox";
+                    img.dataset.type = "image";
+                    img.dataset.src = fileUrl;
+                    img.style.height = "128px";
+                    img.style.width = "auto";
+
+                    img.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const lightbox = new Lightbox(img);
+                        lightbox.show();
+                    });
+
+                    imgCard.appendChild(img);
+
+                    previewContainer.appendChild(imgCard);
+                })
+                if (previewContainer.parentElement.querySelector("#preview_note") === null) {
+                    const selectNote = element.multiple ? "a different set of files" : "a different file";
+                    const noteElement = document.createElement("p");
+                    noteElement.id = "preview_note";
+                    noteElement.classList.add("text-muted");
+                    const emElement = document.createElement("em");
+                    const smallElement = document.createElement("small");
+                    smallElement.innerHTML = "Click on an image to view it in full size.\n" +
+                        "To change files, click on \"Choose Files\" again and select " + selectNote + ".";
+                    noteElement.appendChild(emElement);
+                    emElement.appendChild(smallElement);
+                    previewContainer.parentElement.appendChild(noteElement);
+                }
+                else if (element.files.length === 0) {
+                    previewContainer.parentElement.querySelector("#preview_note").remove();
+                }
+
+            }
+        {% endif %}
     </script>
 {% endblock %}

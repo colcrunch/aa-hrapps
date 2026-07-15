@@ -40,10 +40,19 @@ class Field:
         }
 
 class ResponseItem:
-    def __init__(self, question, answer, has_attachments=False):
+    def __init__(self,
+                 question,
+                 answer,
+                 has_attachments=False,
+                 allowMultiple=None,
+                 allowUpdates=None,
+                 attachmentLimit=None):
         self.question = question
         self.answer = answer
         self.has_attachments = has_attachments
+        self.allowMultiple = allowMultiple
+        self.allowUpdates = allowUpdates
+        self.attachmentLimit = attachmentLimit
 
     @property
     def answer_is_list(self):
@@ -108,7 +117,7 @@ def get_application_context(request, application_id, admin=False):
     response_items = []
     for item in application.response["questions"]:
         if "attachments" in item.keys():
-            response_items.append(ResponseItem(item["question"], item["answer"], True))
+            response_items.append(ResponseItem(item["question"], item["answer"], True, item["allowMultiple"], item["allowUpdates"], item["attachmentLimit"]))
         else:
             response_items.append(ResponseItem(item["question"], item["answer"]))
 

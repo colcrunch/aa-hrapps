@@ -69,3 +69,9 @@ input.invalid-field:focus, textarea.invalid-field:focus {
 .card-img-full {
     border-radius: var(--bs-card-border-radius);
 }
+
+.offcanvas-auto-height {
+  top: auto !important;
+  bottom: 0 !important;
+  height: auto !important;
+}

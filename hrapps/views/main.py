@@ -46,8 +46,8 @@ def apply(request, form_id):
     if request.method == "POST":
         logger.debug(request.FILES)
         body = request.POST.get("application")
-        logger.debug(body)
         body_json = json.loads(body)
+        logger.debug(body)
 
         has_files = bool(request.FILES)
 
@@ -55,6 +55,25 @@ def apply(request, form_id):
         if user_has_active_application(request.user, form):
             messages.error(request, "You already applied for this form.")
             return HttpResponse(status=403)
+
+        if has_files:
+            logger.debug(request.FILES)
+            file_fields = {field_id: field for field_id, field in enumerate(fields) if field.type == "image"}
+            questions = body_json.get("questions")
+            for file_field in request.FILES.keys():
+                files = request.FILES.getlist(file_field)
+                field_id = int(file_field.split("_")[1]) - 1
+
+                if file_fields[field_id].attachmentLimit:
+                    if len(files) > file_fields[field_id].attachmentLimit:
+                        return HttpResponse(
+                            status=400,
+                            content=f"You cannot upload more than {file_fields[field_id].attachmentLimit} "
+                                    f"files for the {file_fields[field_id].question} field"
+                        )
+                questions[field_id]["attachmentLimit"] = file_fields[field_id].attachmentLimit
+                questions[field_id]["allowMultiple"] = file_fields[field_id].allowMultiple
+                questions[field_id]["allowUpdates"] = file_fields[field_id].allowUpdates
 
         try:
             resp = FormResponse.objects.create(form=form, user=request.user, response=body_json)
@@ -65,20 +84,6 @@ def apply(request, form_id):
             return HttpResponse(status=500)
 
         if has_files:
-            logger.debug(request.FILES)
-            file_fields = {field_id: field for field_id, field in enumerate(fields) if field.type == "image"}
-            for file_field in request.FILES.keys():
-                files = request.FILES.getlist(file_field)
-                field_id = int(file_field.split("_")[1])-1
-
-                if file_fields[field_id].attachmentLimit:
-                    if len(files) > file_fields[field_id].attachmentLimit:
-                        return HttpResponse(
-                            status=400,
-                            content=f"You cannot upload more than {file_fields[field_id].attachmentLimit} "
-                                    f"files for the {file_fields[field_id].question} field"
-                        )
-
             for file_field in request.FILES.keys():
                 files = request.FILES.getlist(file_field)
                 field_id = int(file_field.split("_")[1])
