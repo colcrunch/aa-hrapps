@@ -135,6 +135,7 @@ def get_application_context(request, application_id, admin=False):
       "memberaudit": memberaudit,
       "admin": admin,
       "attachments": attachments,
+      "final_states": ["approved", "rejected"]
     }
 
 def add_comment(request, response_id):

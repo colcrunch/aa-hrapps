@@ -58,10 +58,10 @@
                     </dl>
                     <hr>
                     <div class="d-flex justify-content-center flex-wrap">
-                        {% if request.user == application.user and not admin %}
+                        {% if request.user == application.user and not admin and not application.status in final_states %}
                             <button class="btn btn-xs btn-danger m-1" data-bs-toggle="modal" data-bs-target="#withdraw-modal">Withdraw Application</button>
                         {% endif %}
-                        {% if admin and perms.hrapps.modify_status %}
+                        {% if admin and perms.hrapps.modify_status and not application.status in final_states %}
                             <button class="btn btn-xs btn-warning m-1" data-bs-toggle="modal" data-bs-target="#review-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Mark Under Review</button>
                             <button class="btn btn-xs btn-success m-1" data-bs-toggle="modal" data-bs-target="#approve-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Approve</button>
                             <button class="btn btn-xs btn-danger m-1" data-bs-toggle="modal" data-bs-target="#reject-modal" {% if application.status == "withdrawn" %}disabled{% endif %}>Reject</button>
