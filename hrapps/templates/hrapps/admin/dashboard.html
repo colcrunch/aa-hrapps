@@ -58,11 +58,24 @@
 {% endblock %}
 
 {%  block extra_javascript %}
+    {% include "bundles/datatables-js-bs5.html" %}
     {% include "hrapps/bundles/choices-js.html" %}
+    {% get_datatables_language_static LANGUAGE_CODE as DT_LANG_PATH %}
     <script>
         const choices = new Choices('#welcomeIgnoredStates', {
             "removeItemButton": true,
             "placeholderValue": "Select States to Ignore..."
+        })
+
+        $(document).ready(function() {
+            $("#applications-table").DataTable({
+                language: {
+                    url: '{{ DT_LANG_PATH }}'
+                },
+               columns: [null, null, null, null, null, {orderable: false}],
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+               pageLength: 5,
+            })
         })
 
         {% for state in discord_settings.ignored_states.all %}
@@ -73,4 +86,5 @@
 
 {% block more_css %}
     {% include "hrapps/bundles/choices-css.html" %}
+    {% include "bundles/datatables-css-bs5.html" %}
 {% endblock %}

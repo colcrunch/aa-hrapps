@@ -29,7 +29,6 @@
                                             <a href="{% url "hrapps:view" application.pk %}" class="btn btn-primary">
                                                 <span class="fa fa-eye"></span>
                                             </a>
-                                            Tools here
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -95,6 +94,14 @@
                     url: '{{ DT_LANG_PATH }}'
                 },
                 columns: [null, {orderable: false}]
+            });
+            $("#applications-table").DataTable({
+                language: {
+                    url: '{{ DT_LANG_PATH }}'
+                },
+               columns: [null, null, {orderable: false}],
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+               pageLength: 5,
             })
         })
     </script>
