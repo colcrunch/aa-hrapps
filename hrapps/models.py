@@ -109,6 +109,10 @@ class FormResponse(models.Model):
     def status_label(self):
         return StatusChoices(self.status).label
 
+    @property
+    def is_closed(self):
+        return self.status in ("approved", "rejected", "withdrawn")
+
     class Meta:
         default_permissions = (())
         permissions = (
