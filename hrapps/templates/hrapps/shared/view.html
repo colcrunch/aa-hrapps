@@ -154,7 +154,7 @@
                                 {% elif response.has_attachments %}
                                     <div class="image-preview">
                                     {% for attachment in attachments|filter_by_question_id:forloop.counter %}
-                                        <div class="card img-fluid">
+                                        <div class="card img-fluid" style="margin-right: 10px;">
                                             <a href="{{ attachment.file.url }}" data-toggle="lightbox">
                                                 <img src="{{ attachment.file.url }}" class="card-img-full" style="height: 128px; width: auto;">
                                             </a>
@@ -224,7 +224,7 @@
                    document.getElementById("uploadLimitNote").remove();
                }
 
-               const questionID = buttonData.questionId;
+               const questionID = buttonData.question;
                const multiple = buttonData.multiple;
                const attachLimit = parseInt(buttonData.limit);
 

@@ -113,6 +113,32 @@ def view_application(request, application_id):
         messages.error(request, "The requested application could not be found.")
         return redirect("hrapps:dashboard")
 
+    if request.method == "POST":
+        question = request.POST.get("question_id")
+        app_id = ctx["application"].id
+
+        files = request.FILES.getlist("file")
+        if len(files) == 0:
+            messages.error(request, "No files were uploaded.")
+            return render(request, "hrapps/shared/view.html", ctx)
+
+        limit = ctx["responses"][int(question) - 1].attachmentLimit
+        attachments = Attachment.objects.filter(response_id=app_id, question_id=question).count()
+        if len(files) > limit or attachments + len(files) > limit:
+            messages.error(request, f"The total number of attachments for this question cannot exceed {limit}.")
+            return render(request, "hrapps/shared/view.html", ctx)
+
+        for file in files:
+            try:
+                Attachment.objects.create(response_id=app_id, file=file, question_id=question)
+            except Exception as e:
+                logger.error(e)
+                return HttpResponse(status=500)
+
+        new_ctx = get_application_context(request, application_id)
+        messages.success(request, "File(s) uploaded successfully.")
+        return render(request, "hrapps/shared/view.html", new_ctx)
+
     return render(request, "hrapps/shared/view.html", ctx)
 
 
