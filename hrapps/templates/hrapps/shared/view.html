@@ -143,6 +143,19 @@
                                     {% endif %}
                                     </div>
                                 {% endif %}
+                                {% if response.has_attachments and admin %}
+                                    <div class="float-end">
+                                        <form method="post" action="{% url "hradmin:view_response" application.id %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="question" value="{{ response.question }}">
+                                            {% if response.allowUpdates %}
+                                                <button class="btn btn-xs btn-danger" type="submit">Disable Updates</button>
+                                            {% else %}
+                                                <button class="btn btn-xs btn-success" type="submit">Enable Updates</button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="card-body">
                                 {% if response.answer_is_list %}
@@ -311,6 +324,9 @@
                 }
 
             }
+        {% endif %}
+        {% if admin %}
+
         {% endif %}
     </script>
 {% endblock %}
