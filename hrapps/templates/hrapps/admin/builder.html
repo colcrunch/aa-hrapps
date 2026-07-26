@@ -34,7 +34,7 @@
                         <textarea class="form-control" id="description" rows="3">{{ form.description }}</textarea>
                     </div>
                     <div class="form-group" style="display: flex; justify-content: flex-end;">
-                        <input type="checkbox" class="form-check-input" id="active" style="margin-right: 3px;" {% if active %} checked {% endif %}>
+                        <input type="checkbox" class="form-check-input" id="active" style="margin-right: 3px;" {% if form.active %} checked {% endif %}>
                         <label for="active">Active</label>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-2" onclick="submitForm('{{ csrf_token }}', {{ has_active|lower }})">{{ action|title }} Form</button>
+                <button class="btn btn-primary mt-2" onclick="submitForm('{{ csrf_token }}', {{ has_active|lower }}, {{ form.active|lower }})">{{ action|title }} Form</button>
             </div>
         </div>
         <div class="col-md-8">

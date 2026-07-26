@@ -292,14 +292,14 @@ function confirmActivateForm() {
     })
 }
 
-async function submitForm(csrf_token, has_active) {
+async function submitForm(csrf_token, has_active, bypassConfirm = false) {
     const formJson = buildFormJson();
 
     if ("error" in formJson) {
         console.log(`Unable to submit form: ${formJson.error}`)
         return;
     }
-    if (has_active && formJson.active) {
+    if (has_active && formJson.active && !bypassConfirm) {
         let confirmed = await confirmActivateForm();
         if (!confirmed) {
             return;
