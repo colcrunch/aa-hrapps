@@ -30,6 +30,10 @@ class HRAppDiscordSettings(SingletonModel):
     recruiter_role = models.BigIntegerField(null=True, blank=True)
     recruit_role = models.BigIntegerField(null=True, blank=True)
 
+    # Notification Settings
+    enable_application_notifications = models.BooleanField(default=False)
+    application_notification_channel = models.BigIntegerField(null=True, blank=True)
+
     class Meta:
         verbose_name = "HRApp Discord Settings"
         default_permissions = (())
@@ -92,7 +96,6 @@ class FormResponse(models.Model):
     recruiter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="recruited_responses")
     reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="reviewed_responses")
     status = models.CharField(max_length=15, choices=StatusChoices.choices, default=StatusChoices.PENDING)
-
 
     @property
     def status_color_class(self):
