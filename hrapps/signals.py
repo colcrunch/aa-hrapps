@@ -120,6 +120,8 @@ def notify_user(sender, instance, created, **kwargs):
         msg = (f"The status of your application to join {instance.form.corporation.corporation_name} has changed.\n"
                f"Previous Status: {instance._prev_state['status']}\n"
                f"New Status: {instance.status}")
+    else:
+        return
 
     Notification.objects.notify_user(
         user=instance.user,
