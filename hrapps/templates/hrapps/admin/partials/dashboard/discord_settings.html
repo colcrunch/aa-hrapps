@@ -3,7 +3,7 @@
         <div class="card-header">Discord Settings</div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="card">
                         <form action="{% url 'hradmin:update_discord' %}" method="post">
                         {% csrf_token %}
@@ -29,7 +29,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="card">
                         <form action="{% url 'hradmin:update_discord' %}" method="post">
                         {% csrf_token %}
@@ -40,8 +40,26 @@
                                 <input type="text" class="form-control" id="recruitmentChannel" name="channel" value="{% if discord_settings.recruitment_thread_channel %}{{ discord_settings.recruitment_thread_channel }}{% endif %}">
                                 <label for="recruitmentRole">Recruiter Role</label>
                                 <input type="text" class="form-control" id="recruitmentRole" name="role" value="{% if discord_settings.recruiter_role %}{{ discord_settings.recruiter_role }}{% endif %}">
-                            <label for="recruitmentRRole">Recruit Role</label>
+                                <label for="recruitmentRRole">Recruit Role</label>
                                 <input type="text" class="form-control" id="recruitmentRRole" name="rrole" value="{% if discord_settings.recruiter_role %}{{ discord_settings.recruiter_role }}{% endif %}">
+                            </div>
+                            <div class="card-footer">
+                                <div class="text-end">
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <form action="{% url 'hradmin:update_discord' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="notification" value="true">
+                            <div class="card-header">Recruitment Notification Settings<div class="float-end"><input id="recruitNotiEnabled" type="checkbox" name="enabled" {% if discord_settings.enable_application_notifications %}checked{% endif %}> <label for="recruitNotiEnabled">Enabled?</label></div></div>
+                            <div class="card-body">
+                                <label for="recruitmentNotiChannel">Notification Channel</label>
+                                <input type="text" class="form-control" id="recruitmentNotiChannel" name="channel" value="{% if discord_settings.application_notification_channel %}{{ discord_settings.application_notification_channel }}{% endif %}">
                             </div>
                             <div class="card-footer">
                                 <div class="text-end">

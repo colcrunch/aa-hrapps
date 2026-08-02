@@ -3,11 +3,12 @@ import json
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from allianceauth.utils.cache import get_redis_client
 from allianceauth.services.hooks import get_extension_logger
 from allianceauth.notifications.models import Notification
 
-from .models import FormResponse, StatusChoices
+from .models import FormResponse, StatusChoices, ResponseComment
 
 logger = get_extension_logger(__name__)
 
@@ -47,6 +48,29 @@ def notify_recruiters(sender, instance, created, **kwargs):
                 level=Notification.Level.INFO
             )
     return
+
+if "aadiscordbot" in settings.INSTALLED_APPS:
+    @receiver(post_save, sender=FormResponse)
+    def announce_new_app(sender, instance, created, **kwargs):
+        if created:
+            logger.debug("New application; Publishing to Redis")
+            client = get_redis_client()
+            message = {"action": "new application", "app_pk": instance.pk}
+
+            client.publish("hrapp_application_notifications", json.dumps(message))
+            logger.debug("Published new application notification")
+        return
+
+    @receiver(post_save, sender=ResponseComment)
+    def announce_comment(sender, instance, created, **kwargs):
+        if created:
+            logger.debug("New comment; Publishing to Redis")
+            client = get_redis_client()
+            message = {"action": "new comment", "comment_pk": instance.pk}
+
+            client.publish("hrapp_comment_notifications", json.dumps(message))
+            logger.debug("Published new comment notification")
+        return
 
 @receiver(pre_save, sender=FormResponse)
 def append_previous_state(sender, instance, **kwargs):

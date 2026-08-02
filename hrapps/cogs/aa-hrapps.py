@@ -4,13 +4,15 @@ from collections import defaultdict
 
 import discord.ui
 import redis.asyncio as aioredis
+from django.conf import settings
 from allianceauth.utils.cache import get_redis_client
 from aadiscordbot.utils.auth import get_auth_user
 from allianceauth.services.hooks import get_extension_logger
 from aadiscordbot.app_settings import get_all_servers, get_site_url
 from aadiscordbot.cogs.utils.exceptions import NotAuthenticated
 from discord.ext import commands
-from hrapps.models import HRAppDiscordSettings
+from hrapps.models import HRAppDiscordSettings, FormResponse, ResponseComment
+from allianceauth.eveonline.evelinks import eveimageserver
 
 logger = get_extension_logger(__name__)
 
@@ -118,6 +120,9 @@ class HRApps(commands.Cog):
 
     async def listen_to_mq(self):
         await self.pubsub.subscribe("hrapp_discord_settings")
+        if self.settings.enable_application_notifications:
+            await self.pubsub.subscribe("hrapp_application_notifications")
+            await self.pubsub.subscribe("hrapp_comment_notifications")
         logger.debug("Listening for HRApp settings updates.")
 
         try:
@@ -125,14 +130,59 @@ class HRApps(commands.Cog):
                 if message["type"] == "message":
                     logger.debug("Received redis message")
                     data = json.loads(message["data"])
+                    action = data.get("action")
 
-                    if data.get("action") == "settings_updated":
+                    if action == "settings_updated":
                         logger.debug("HRApp settings updated, updating local settings.")
                         await self.update_settings()
+                    if action == "new application":
+                        logger.debug("New HRApp application detected, sending notification.")
+                        await self.send_new_app_notification(data.get("app_pk"))
+                    if action == "new comment":
+                        logger.debug("New HRApp comment detected, sending notification.")
+                        await self.send_new_comment_notification(data.get("comment_pk"))
         except asyncio.CancelledError:
             logger.debug("Cancelled listening for HRApp settings updates.")
         except Exception as e:
             logger.error(f"Error listening for HRApp settings updates: {e}")
+            logger.exception(e)
+
+    async def send_new_app_notification(self, app_pk):
+        channel = self.bot.get_channel(self.settings.application_notification_channel)
+        application = FormResponse.objects.get(pk=app_pk)
+        embed = discord.Embed(
+            title="New Application Submitted",
+            description=f"{application.user.profile.main_character.character_name} "
+                        f"has applied to join {application.form.corporation.corporation_name}",
+            colour=discord.Colour.green()
+        )
+        embed.set_author(name=application.user.profile.main_character.character_name,
+                         icon_url=eveimageserver.character_portrait_url(application.user.profile.main_character.character_id))
+        embed.set_thumbnail(url=eveimageserver.corporation_logo_url(application.form.corporation.corporation_id, 128))
+        embed.set_footer(text=f"{self.bot.user.name} via AllianceAuth HRApps", icon_url=self.bot.user.display_avatar.url)
+        embed.add_field(name=" ", value="⠀")
+        embed.add_field(name="App Link", value=f"[Click Here]({settings.SITE_URL}/hradmin/resp/{app_pk})", inline=False)
+
+        await channel.send(embed=embed)
+
+    async def send_new_comment_notification(self, comment_pk):
+        channel = self.bot.get_channel(self.settings.application_notification_channel)
+        comment = ResponseComment.objects.get(pk=comment_pk)
+        application = comment.response
+        embed = discord.Embed(
+            title=f"New Comment",
+            description=f"{comment.user.profile.main_character.character_name} commented on "
+                        f"{application.user.profile.main_character.character_name}'s application.",
+            colour=discord.Colour.blurple()
+        )
+        embed.set_author(name=comment.user.profile.main_character.character_name,
+                         icon_url=eveimageserver.character_portrait_url(comment.user.profile.main_character.character_id))
+        embed.set_footer(text=f"{self.bot.user.name} via AllianceAuth HRApps", icon_url=self.bot.user.display_avatar.url)
+        embed.add_field(name="Private Comment?", value=f"{comment.private}", inline=False)
+        embed.add_field(name="Comment", value=f"{comment.content}", inline=False)
+        embed.add_field(name=" ", value=" ", inline=False)
+
+        await channel.send(embed=embed)
 
     async def update_settings(self):
         self.settings = HRAppDiscordSettings.get_solo()

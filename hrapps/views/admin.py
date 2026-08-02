@@ -401,6 +401,8 @@ def update_discord(request):
         update_success = update_discord_welcome_settings(request)
     elif "recruitment" in keys:
         update_success = update_discord_recruitment_settings(request)
+    elif "notification" in keys:
+        update_success = update_discord_app_notification_settings(request)
     else:
         messages.error(request, "Invalid request.")
         logger.error(f"Invalid request to update discord settings, no keys found.")
@@ -415,6 +417,31 @@ def update_discord(request):
 
     return redirect("hradmin:dashboard")
 
+@permissions_required(("hrapps.manage_hrapps"))
+def update_discord_app_notification_settings(request):
+    data = request.POST
+    app_noti_enabled = data.get("enabled")
+    app_noti_channel = data.get("channel")
+
+    if app_noti_channel == "":
+        app_noti_channel = None
+
+    if app_noti_enabled == "on":
+        app_noti_enabled = True
+    else:
+        app_noti_enabled = False
+
+    try:
+        discord_settings = HRAppDiscordSettings.get_solo()
+        discord_settings.enable_application_notifications = app_noti_enabled
+        discord_settings.application_notification_channel = app_noti_channel
+        discord_settings.save()
+    except Exception as e:
+        logger.error(f"Failed to update discord notification settings: {e}")
+        logger.exception(e)
+        return False
+
+    return True
 
 @permissions_required(("hrapps.manage_hrapps",))
 def update_discord_welcome_settings(request):
