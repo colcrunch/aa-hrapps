@@ -180,7 +180,9 @@ class HRApps(commands.Cog):
         embed.set_footer(text=f"{self.bot.user.name} via AllianceAuth HRApps", icon_url=self.bot.user.display_avatar.url)
         embed.add_field(name="Private Comment?", value=f"{comment.private}", inline=False)
         embed.add_field(name="Comment", value=f"{comment.content}", inline=False)
-        embed.add_field(name=" ", value=" ", inline=False)
+        embed.add_field(name=" ", value="⠀", inline=False)
+
+        embed.add_field(name="App Link", value=f"[Click Here]({settings.SITE_URL}/hradmin/resp/{application.pk})", inline=False)
 
         await channel.send(embed=embed)
 
