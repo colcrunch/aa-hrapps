@@ -81,6 +81,7 @@ def apply(request, form_id):
                 return HttpResponse(status=201)
         except Exception as e:
             logger.error(e)
+            logger.exception(e)
             return HttpResponse(status=500)
 
         if has_files:
