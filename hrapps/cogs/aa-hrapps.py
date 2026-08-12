@@ -131,6 +131,7 @@ class HRApps(commands.Cog):
                     logger.debug("Received redis message")
                     data = json.loads(message["data"])
                     action = data.get("action")
+                    logger.debug(f"Action: {action}")
 
                     if action == "settings_updated":
                         logger.debug("HRApp settings updated, updating local settings.")
@@ -141,6 +142,12 @@ class HRApps(commands.Cog):
                     if action == "new comment":
                         logger.debug("New HRApp comment detected, sending notification.")
                         await self.send_new_comment_notification(data.get("comment_pk"))
+                    if action == "application claimed":
+                        logger.debug("HRApp application claimed, sending notification.")
+                        await self.send_claim_notification(data.get("app_pk"), data.get("recruiter", True))
+                    if action == "application status changed":
+                        logger.debug("HRApp application status changed, sending notification.")
+                        await self.send_status_notification(data.get("app_pk"), data.get("old"))
         except asyncio.CancelledError:
             logger.debug("Cancelled listening for HRApp settings updates.")
         except Exception as e:
@@ -184,6 +191,75 @@ class HRApps(commands.Cog):
 
         embed.add_field(name="App Link", value=f"[Click Here]({settings.SITE_URL}/hradmin/resp/{application.pk})", inline=False)
 
+        await channel.send(embed=embed)
+
+    async def send_claim_notification(self, app_pk, recruiter=True):
+        channel = self.bot.get_channel(self.settings.application_notification_channel)
+        application = FormResponse.objects.get(pk=app_pk)
+        claimer = application.recruiter if recruiter else application.reviewer
+        title = ""
+        description = ""
+        if claimer is None:
+            title = f"{'Recruiter' if recruiter else 'Reviewer'} Claim Reset by Admin"
+            description = (f"The {'recruiter' if recruiter else 'reviewer'} claim on "
+                           f"{application.user.profile.main_character.character_name}'s application to join "
+                           f"{application.form.corporation.corporation_name} has been cleared by a site administrator.")
+        else:
+            title = f"Application claimed by {'recruiter' if recruiter else 'reviewer'}"
+            description = (f"{claimer.profile.main_character.character_name} claimed "
+                        f"{application.user.profile.main_character.character_name}'s application to join "
+                        f"{application.form.corporation.corporation_name} as the {'recruiter' if recruiter else 'reviewer'}.")
+        embed = discord.Embed(
+            title=title,
+            description=description,
+            color=discord.Colour.orange()
+        )
+        embed.set_author(name=claimer.profile.main_character.character_name,
+                         icon_url=eveimageserver.character_portrait_url(claimer.profile.main_character.character_id))
+        embed.set_footer(text=f"{self.bot.user.name} vial AllianceAuth HRApps", icon_url=self.bot.user.display_avatar.url)
+        embed.add_field(name=" ", value="⠀", inline=False)
+
+        embed.add_field(name="App Link", value=f"[Click Here]({settings.SITE_URL}/hradmin/resp/{application.pk})",
+                        inline=False)
+
+        await channel.send(embed=embed)
+
+    async def send_status_notification(self, app_pk, old_status):
+        channel = self.bot.get_channel(self.settings.application_notification_channel)
+        application = FormResponse.objects.get(pk=app_pk)
+        title = "Application Status Changed"
+        description = (f"{application.user.profile.main_character.character_name}'s application to join "
+                        f"{application.form.corporation.corporation_name} has been updated.")
+        color = discord.Colour.orange()
+        if application.status == "approved":
+            title = "Application Approved"
+            description = (f"{application.user.profile.main_character.character_name}'s application to join "
+                        f"{application.form.corporation.corporation_name} has been approved.")
+            color = discord.Colour.green()
+        elif application.status == "rejected":
+            title = "Application Rejected"
+            description = (f"{application.user.profile.main_character.character_name}'s application to join "
+                        f"{application.form.corporation.corporation_name} has been rejected.")
+            color = discord.Colour.red()
+
+        embed = discord.Embed(
+            title=title,
+            description=description,
+            colour=color
+        )
+        embed.set_author(name=application.user.profile.main_character.character_name,
+                         icon_url=eveimageserver.character_portrait_url(
+                             application.user.profile.main_character.character_id)
+                         )
+        embed.set_footer(text=f"{self.bot.user.name} vial AllianceAuth HRApps",
+                         icon_url=self.bot.user.display_avatar.url)
+        if application.status not in ("approved", "rejected"):
+            embed.add_field(name="New Status", value=f"{application.status}")
+            embed.add_field(name="Old Status", value=f"{old_status}")
+        embed.add_field(name=" ", value="⠀", inline=False)
+
+        embed.add_field(name="App Link", value=f"[Click Here]({settings.SITE_URL}/hradmin/resp/{application.pk})",
+                        inline=False)
         await channel.send(embed=embed)
 
     async def update_settings(self):

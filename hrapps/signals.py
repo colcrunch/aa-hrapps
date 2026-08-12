@@ -51,7 +51,7 @@ def notify_recruiters(sender, instance, created, **kwargs):
 
 if "aadiscordbot" in settings.INSTALLED_APPS:
     @receiver(post_save, sender=FormResponse)
-    def announce_new_app(sender, instance, created, **kwargs):
+    def announce_app_changes(sender, instance, created, **kwargs):
         if created:
             logger.debug("New application; Publishing to Redis")
             client = get_redis_client()
@@ -59,6 +59,23 @@ if "aadiscordbot" in settings.INSTALLED_APPS:
 
             client.publish("hrapp_application_notifications", json.dumps(message))
             logger.debug("Published new application notification")
+            return
+        logger.debug("Application changed; Publishing to Redis")
+        client = get_redis_client()
+        message = {"action": "application", "app_pk": instance.pk}
+
+        if instance.recruiter != instance._prev_state["recruiter"]:
+            message["action"] = message["action"] + " claimed"
+            message["recruiter"] = True
+        elif instance.reviewer != instance._prev_state["reviewer"]:
+            message["action"] = message["action"] + " claimed"
+            message["recruiter"] = False
+        elif instance.status != instance._prev_state["status"]:
+            message["action"] = message["action"] + " status changed"
+            message["old"] = instance._prev_state["status"]
+
+        client.publish("hrapp_application_notifications", json.dumps(message))
+        logger.debug("Published application change notification.")
         return
 
     @receiver(post_save, sender=ResponseComment)
