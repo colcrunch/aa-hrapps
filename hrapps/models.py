@@ -137,6 +137,7 @@ class Comment(models.Model):
     class Meta:
         default_permissions = (())
 
+
 class ResponseComment(Comment):
     response = models.ForeignKey(FormResponse, on_delete=models.CASCADE, related_name="comments")
     # Private comments and their replies should be hidden from the respondent even if they have the permissions
