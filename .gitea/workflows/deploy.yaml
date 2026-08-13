@@ -20,7 +20,7 @@ jobs:
         run: python -m build
 
       - name: Upload Package
-        if: ${{ !env.ACT }} # Don't run in a local test environment
+        if: ${{ env.GITEA_ACTIONS }} # Don't run in a local test environment
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
