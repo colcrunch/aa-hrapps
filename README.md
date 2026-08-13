@@ -24,20 +24,60 @@ A suite of HR tools for AllianceAuth.
 
 ## Installation
 
-If you are running nginx add the following to your site's nginx config. 
+### 1. Install App
+Install the app into your AllianceAuth instance.
+```bash
+pip install aa-hrapps
+```
+#### Optional:
+While the allianceauth-discordbot cog is included with the hrapps module, if it is not already installed, you can install it along with hrapps by using the following command instead (doing so will also ensure the right version is installed if you already have it):
+```bash
+pip install aa-hrapps[discordbot]
+```
+
+### 2. Cofigure AA Settings
+
+Configure your AA settings (`local.py`) as follows:
+* Modufy `INSTALLED_APPS` to include the following entries:
+```py
+INSTALLED_APPS = [
+    # ...
+    "hrapps",
+    # ...
+]
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/var/www/myauth/media/"
+```
+
+### 3. Update your webserver config
+
+#### Nginx
+If you are running nginx add the following to your site's nginx config:
 
 ```
 location /media/ {
     alias /var/www/myauth/media/;
+    autoindex off;
 }
 ```
 
-Add the following to your `local.py`
+#### Apache
+If you are running apache add the following to your site's config:
 
-```py
-MEDIA_URL = "/media/"
-MEDIA_ROOT = "/var/www/myauth/media/"
+```
+Alias /media/ /var/www/myauth/media/
 
+<Directory /var/www/myauth/media/>
+    Require all granted
+</Directory>
+```
+### 4. Finalize Install
+Run migrations and copy static files.
+
+```bash
+python manage.py migrate
+python manage.py collectstatic
 ```
 
 ## Permissions
