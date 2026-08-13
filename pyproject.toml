@@ -47,7 +47,7 @@ dependencies = [
 ]
 
 optional-dependencies.discordbot = [
-    "allianceauth-discordbot>=3.8",
+    "allianceauth-discordbot>=5",
 ]
 urls.Documentation = "https://github.com/colcrunch/aa-hrapps/-/blob/master/README.md"
 urls.Homepage = "https://github.com/colcrunch/aa-hrapps"
