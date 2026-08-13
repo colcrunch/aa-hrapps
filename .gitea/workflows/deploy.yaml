@@ -13,22 +13,15 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-
-      - name: install dependencies
-        run: make dev
-
-      - name: clean up
-        run: make clean
+      - name: Install Dependencies
+        run: pip install build wheel twine
 
       - name: Build Python
-        run: make package
+        run: python -m build
 
       - name: Upload Package
         if: ${{ !env.ACT }} # Don't run in a local test environment
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: make deploy
+        run: twine upload dist/*
