@@ -128,15 +128,21 @@ class FormResponse(models.Model):
         )
 
 
-class ResponseComment(models.Model):
-    response = models.ForeignKey(FormResponse, on_delete=models.CASCADE, related_name="comments")
+class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     content = models.TextField(null=False, blank=False)
     reply_to = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name='replies')
+    created = models.DateTimeField(auto_now_add=True, null=False)
+
+    class Meta:
+        default_permissions = (())
+
+class ResponseComment(Comment):
+    response = models.ForeignKey(FormResponse, on_delete=models.CASCADE, related_name="comments")
     # Private comments and their replies should be hidden from the respondent even if they have the permissions
     # to view/create comments. (Except where user has manage_hrapps perm)
     private = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True, null=False)
+
 
     class Meta:
         default_permissions = (())
