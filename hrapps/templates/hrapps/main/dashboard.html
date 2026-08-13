@@ -16,6 +16,7 @@
                         <table class="table table-hover" id="applications-table">
                             <thead>
                                 <th>Corp</th>
+                                <th>Date</th>
                                 <th>Status</th>
                                 <th> </th>
                             </thead>
@@ -24,6 +25,7 @@
                                     <tr>
                                         <td><img src="{{ application.form.corporation|corporation_logo_url:32 }}"
                                          alt="{{ application.form.corporation.corporation_name }} Logo">{{ application.form.corporation.corporation_name }}</td>
+                                        <td data-sort="{{ application.created|date:"Ymd" }}">{{ application.created }}</td>
                                         <td><span class="badge bg-{{ application.status_color_class }}">{{ application.status_label }}</span></td>
                                         <td>
                                             <a href="{% url "hrapps:view" application.pk %}" class="btn btn-primary">
@@ -99,7 +101,8 @@
                 language: {
                     url: '{{ DT_LANG_PATH }}'
                 },
-               columns: [null, null, {orderable: false}],
+                order: [[1, "desc"]],
+               columns: [null, null, null, {orderable: false}],
                 lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                pageLength: 5,
             })
