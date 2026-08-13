@@ -1,0 +1,34 @@
+name: Deploy
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: install dependencies
+        run: make dev
+
+      - name: clean up
+        run: make clean
+
+      - name: Build Python
+        run: make package
+
+      - name: Upload Package
+        if: ${{ !env.ACT }} # Don't run in a local test environment
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: make deploy
