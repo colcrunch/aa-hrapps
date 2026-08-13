@@ -1,11 +1,26 @@
 # AA-HRAPPS
-A WIP Recruitment tool.
+A suite of HR tools for AllianceAuth.
 
 ## Features
-* Drag and drop form builder
-* Admin frontend for easy management
-* Corptools and memberaudit integration
-* Doscordbot integration
+### Form Building & Responses
+* Drag-and-Drop Form Builder
+* Self-Contained Form Responses
+
+### Administration & Management
+* Streamlined Admin Frontend
+* Form library allows for corps to have multiple versions of their recruitment form
+  * In shared auth situations, corps can copy forms from other corps.
+
+### Communication & Collaboration
+* Threaded Comments
+* Private Comments
+
+### Integrations
+* Corptools & Memberaudit
+* Discord Bot Integration
+  * Welcome new discord users with a prompt inviting them to talk with a recruiter.
+  * Facilitate discussions between Recruiters and prospective recruits with managed discord threads for recruitment.
+  * Updates to HRApps cog settings do not require a restart.
 
 ## Installation
 
