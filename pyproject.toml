@@ -23,16 +23,12 @@ requires-python = ">=3.10"
 classifiers = [
     "Environment :: Web Environment",
     "Framework :: Django",
-    "Framework :: Django :: 3.2",
-    "Framework :: Django :: 4.0",
-    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 5.2",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: MIT",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Internet :: WWW/HTTP",
@@ -49,7 +45,7 @@ dependencies = [
 optional-dependencies.discordbot = [
     "allianceauth-discordbot>=5",
 ]
-urls.Documentation = "https://github.com/colcrunch/aa-hrapps/-/blob/master/README.md"
+urls.Documentation = "https://github.com/colcrunch/aa-hrapps/blob/master/README.md"
 urls.Homepage = "https://github.com/colcrunch/aa-hrapps"
 urls.Source = "https://github.com/colcrunch/aa-hrapps.git"
 urls.Tracker = "https://github.com/colcrunch/aa-hrapps/-/issues"
