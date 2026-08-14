@@ -22,6 +22,14 @@ A suite of HR tools for AllianceAuth.
   * Facilitate discussions between Recruiters and prospective recruits with managed discord threads for recruitment.
   * Updates to HRApps cog settings do not require a restart.
 
+### Screenshots
+
+| Form Builder<br/>![Form Builder](./screenshots/Form Builder.jpeg)            | Admin Application View<br/>![Admin Application View](./screenshots/admin_application_view_w_comments.png) |   |
+|------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|---|
+| Discord Settings<br/>![Discord Settings](./screenshots/Discord Settings.png) | Main Application View<br/>![Main Application View](./screenshots/main_application_view.png)             |   |
+| Apply View<br/>![Apply View](./screenshots/Apply View.png)                   |                                                                                                         |   |
+
+
 ## Installation
 
 ### 1. Install App
