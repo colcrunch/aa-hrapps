@@ -20,7 +20,7 @@ def dashboard(request):
         corporation__in=applications
         .filter(status__in=("pending", "under_review"))
         .values_list("form__corporation", flat=True)
-    )
+    ).exclude(corporation__corporation_id=user.profile.main_character.corporation_id)
 
     ctx = {
         "applications": applications,
