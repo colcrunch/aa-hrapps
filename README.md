@@ -24,10 +24,10 @@ A suite of HR tools for AllianceAuth.
 
 ### Screenshots
 
-| Form Builder<br/>![Form Builder](./screenshots/Form Builder.jpeg)            | Admin Application View<br/>![Admin Application View](./screenshots/admin_application_view_w_comments.png) |   |
+| Form Builder<br/>![Form Builder](./screenshots/Form_Builder.jpeg)            | Admin Application View<br/>![Admin Application View](./screenshots/admin_application_view_w_comments.png) |   |
 |------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|---|
-| Discord Settings<br/>![Discord Settings](./screenshots/Discord Settings.png) | Main Application View<br/>![Main Application View](./screenshots/main_application_view.png)             |   |
-| Apply View<br/>![Apply View](./screenshots/Apply View.png)                   |                                                                                                         |   |
+| Discord Settings<br/>![Discord Settings](./screenshots/Discord_Settings.png) | Main Application View<br/>![Main Application View](./screenshots/main_application_view.png)             |   |
+| Apply View<br/>![Apply View](./screenshots/Apply_View.png)                   |                                                                                                         |   |
 
 
 ## Installation
