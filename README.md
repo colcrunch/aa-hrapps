@@ -46,7 +46,7 @@ pip install aa-hrapps[discordbot]
 ### 2. Cofigure AA Settings
 
 Configure your AA settings (`local.py`) as follows:
-* Modufy `INSTALLED_APPS` to include the following entries:
+* Modify `INSTALLED_APPS` to include the following entries:
 ```py
 INSTALLED_APPS = [
     # ...
