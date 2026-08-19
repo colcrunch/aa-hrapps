@@ -4,7 +4,7 @@
         <button type="button" class="btn-close" id="offcanvasClose" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form action="{% url "hrapps:view" application.id %}" id="uploadForm" method="POST" enctype="multipart/form-data">
+        <form action="{% if admin %}{% url "hradmin:view_response" application.id %}{% else %}{% url "hrapps:view" application.id %}{% endif %}" id="uploadForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <label for="file">Upload Images</label>
             <input type="file" name="file" id="fileInput" class="form-control mb-2" onChange="previewFile(this)">
