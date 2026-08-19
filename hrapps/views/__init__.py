@@ -1,8 +1,11 @@
 from django.conf import settings
 from allianceauth.eveonline.models import EveCharacter
 from allianceauth.services.hooks import get_extension_logger
+from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
-from hrapps.models import FormResponse, ResponseComment
+from hrapps.models import FormResponse, ResponseComment, Attachment
 
 logger = get_extension_logger(__name__)
 
@@ -95,6 +98,37 @@ def process_comments(comments):
         replies[id] = comments.filter(reply_to=id)
 
     return root_comments, replies
+
+
+def process_after_app_attachments(request, ctx, admin=False):
+    question = request.POST.get("question")
+    logger.debug(f"Q: {question}")
+    logger.debug(f"A: {admin}")
+    files = request.FILES.getlist("file")
+    app_id = ctx["application"].id
+
+    redirect_target = "hrapps:view" if not admin else "hradmin:view_response"
+
+    request.METHOD = "GET"
+
+    if len(files) == 0:
+        messages.error(request, "No files were uploaded.")
+        return redirect(redirect_target, app_id)
+    if not int(question) == 0:
+        limit = ctx["responses"][int(question) - 1].attachmentLimit
+        attachments = Attachment.objects.filter(response_id=app_id, question_id=question).count()
+        if len(files) > limit or attachments + len(files) > limit:
+            messages.error(request, f"The total number of attachments for this question cannot exceed {limit}.")
+            return redirect(redirect_target, app_id)
+
+    for file in files:
+        try:
+            Attachment.objects.create(response_id=app_id, file=file, question_id=question)
+        except Exception as e:
+            logger.error(e)
+            return HttpResponse(status=500)
+    messages.success(request, "File(s) uploaded successfully.")
+    return redirect(redirect_target, app_id)
 
 
 def get_application_context(request, application_id, admin=False):

@@ -12,7 +12,7 @@ from allianceauth.services.hooks import get_extension_logger
 from allianceauth.eveonline.models import EveCorporationInfo
 
 from hrapps.models import Form, FormResponse, HRAppDiscordSettings
-from . import Field, get_application_context, add_comment, add_reply
+from . import Field, get_application_context, add_comment, add_reply, process_after_app_attachments
 
 logger = get_extension_logger(__name__)
 
@@ -202,6 +202,7 @@ def forms_library(request):
     ctx = {"forms": forms}
     return render(request, "hrapps/admin/form_library.html", ctx)
 
+
 def toggle_updates(response_id, question: str):
     response = FormResponse.objects.get(id=response_id)
     response_content = response.response
@@ -209,6 +210,7 @@ def toggle_updates(response_id, question: str):
     response_content["questions"][idx]["allowUpdates"] = not response_content["questions"][idx]["allowUpdates"]
     response.response = response_content
     response.save()
+
 
 @permissions_required(("hrapps.view_all_responses", "hrapps.view_corp_responses"))
 def view_response(request, response_id):
@@ -226,18 +228,26 @@ def view_response(request, response_id):
         return redirect("hradmin:dashboard")
 
     if request.method == "POST":
-        question = request.POST.get("question")
+        logger.debug(f"POST")
+        logger.debug(request.POST)
+        files = request.FILES.getlist("file") or "file" in request.POST.keys()
 
-        try:
-            toggle_updates(response_id, question)
-        except Exception as e:
-            logger.error(e)
-            messages.error(request, "An error occurred while toggling updates.")
-            return redirect("hradmin:view_response", response_id)
-        messages.success(request, "Updates toggled successfully.")
+        if files:
+            logger.debug(f"FILES? {files}")
+            return process_after_app_attachments(request, ctx, admin=True)
+        else:
+            try:
+                question = request.POST.get("question")
+                toggle_updates(response_id, question)
+            except Exception as e:
+                logger.error(e)
+                messages.error(request, "An error occurred while toggling updates.")
+                return redirect("hradmin:view_response", response_id)
+            messages.success(request, "Updates toggled successfully.")
         return redirect("hradmin:view_response", response_id)
 
     return render(request, "hrapps/shared/view.html", ctx)
+
 
 @permissions_required(("hrapps.modify_status",))
 def approve_response(request, response_id):
@@ -442,6 +452,7 @@ def update_discord_app_notification_settings(request):
         return False
 
     return True
+
 
 @permissions_required(("hrapps.manage_hrapps",))
 def update_discord_welcome_settings(request):
