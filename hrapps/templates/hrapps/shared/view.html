@@ -121,6 +121,9 @@
                     </table>
                 </div>
             </div>
+        {% if admin %}
+            {% include "hrapps/admin/partials/view/admin_attachment.html" %}
+        {% endif %}
         </div>
         <div class="col-md-9">
             <div class="card card-primary mb-3">
@@ -192,8 +195,9 @@
 
     {% if not admin %}
         {% include "hrapps/main/partials/view/withdraw_confirm_modal.html" %}
-        {% include "hrapps/main/partials/view/upload_offcanvas.html" %}
+        {% include "hrapps/shared/partials/view/upload_offcanvas.html" %}
     {% elif admin %}
+        {% include "hrapps/shared/partials/view/upload_offcanvas.html" %}
         {% include "hrapps/admin/partials/view/approve_confirm_modal.html" %}
         {% include "hrapps/admin/partials/view/pend_confirm_modal.html" %}
         {% include "hrapps/admin/partials/view/reject_confirm_modal.html" %}
@@ -227,106 +231,101 @@
            });
         });
 
-        {% if not admin %}
-            const uploadOffcanvas = document.getElementById('uploadOffcanvasBottom');
+        const uploadOffcanvas = document.getElementById('uploadOffcanvasBottom');
 
-            uploadOffcanvas.addEventListener('show.bs.offcanvas', (event) => {
-               const buttonData = event.relatedTarget.dataset;
+        uploadOffcanvas.addEventListener('show.bs.offcanvas', (event) => {
+           const buttonData = event.relatedTarget.dataset;
 
-               if (document.getElementById("uploadLimitNote")) {
-                   document.getElementById("uploadLimitNote").remove();
-               }
+           if (document.getElementById("uploadLimitNote")) {
+               document.getElementById("uploadLimitNote").remove();
+           }
 
-               const questionID = buttonData.question;
-               const multiple = buttonData.multiple;
-               const attachLimit = parseInt(buttonData.limit);
+           const questionID = buttonData.question;
+           const multiple = buttonData.multiple;
+           const attachLimit = parseInt(buttonData.limit);
 
-               if (multiple && attachLimit !== 0) {
-                   const uploadForm = document.getElementById("uploadForm");
-                   const small = document.createElement("small");
-                   const em = document.createElement("em");
-                   em.textContent = `Limit ${attachLimit} total file${attachLimit > 1 ? "s" : ""}`;
-                   small.appendChild(em);
-                   uploadForm.before(small);
-                   small.classList.add("text-muted");
-                   small.classList.add("float-end");
-                   small.id = "uploadLimitNote";
-               }
-
-               const input = document.getElementById("fileInput");
-               input.multiple = multiple;
-
+           if (multiple && attachLimit !== 0) {
                const uploadForm = document.getElementById("uploadForm");
-               const hiddenInput = document.createElement("input");
-               hiddenInput.type = "hidden";
-               hiddenInput.name = "question_id";
-               hiddenInput.value = questionID;
-               uploadForm.appendChild(hiddenInput);
-            });
+               const small = document.createElement("small");
+               const em = document.createElement("em");
+               em.textContent = `Limit ${attachLimit} total file${attachLimit > 1 ? "s" : ""}`;
+               small.appendChild(em);
+               uploadForm.before(small);
+               small.classList.add("text-muted");
+               small.classList.add("float-end");
+               small.id = "uploadLimitNote";
+           }
 
-            uploadOffcanvas.addEventListener('hide.bs.offcanvas', (event) => {
-                const uploadForm = document.getElementById("uploadForm");
-                const fileinput = document.getElementById("fileInput");
-                uploadForm.reset();
-                fileinput.dispatchEvent(new Event("change"));
+           const input = document.getElementById("fileInput");
+           input.multiple = multiple;
+
+           const uploadForm = document.getElementById("uploadForm");
+           const hiddenInput = document.createElement("input");
+           hiddenInput.type = "hidden";
+           hiddenInput.name = "question";
+           hiddenInput.value = questionID;
+           uploadForm.appendChild(hiddenInput);
+        });
+
+        uploadOffcanvas.addEventListener('hide.bs.offcanvas', (event) => {
+            const uploadForm = document.getElementById("uploadForm");
+            const fileinput = document.getElementById("fileInput");
+            uploadForm.reset();
+            fileinput.dispatchEvent(new Event("change"));
+        })
+
+        function previewFile(element) {
+            console.log("Previewing file...");
+            console.log(element);
+            const previewContainer = document.getElementById("image_preview");
+            previewContainer.innerHTML = "";
+
+            const files = Array.from(element.files);
+
+            files.forEach(file => {
+                const fileUrl = URL.createObjectURL(file);
+
+                const imgCard = document.createElement("div");
+                imgCard.classList.add("card", "img-fluid");
+                imgCard.style.marginRight = "10px";
+
+                const img = document.createElement("img");
+                img.classList.add("card-img-full");
+                img.src = fileUrl;
+                img.alt = file.name;
+                img.dataset.toggle = "lightbox";
+                img.dataset.type = "image";
+                img.dataset.src = fileUrl;
+                img.style.height = "128px";
+                img.style.width = "auto";
+
+                img.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const lightbox = new Lightbox(img);
+                    lightbox.show();
+                });
+
+                imgCard.appendChild(img);
+
+                previewContainer.appendChild(imgCard);
             })
-
-            function previewFile(element) {
-                console.log("Previewing file...");
-                console.log(element);
-                const previewContainer = document.getElementById("image_preview");
-                previewContainer.innerHTML = "";
-
-                const files = Array.from(element.files);
-
-                files.forEach(file => {
-                    const fileUrl = URL.createObjectURL(file);
-
-                    const imgCard = document.createElement("div");
-                    imgCard.classList.add("card", "img-fluid");
-                    imgCard.style.marginRight = "10px";
-
-                    const img = document.createElement("img");
-                    img.classList.add("card-img-full");
-                    img.src = fileUrl;
-                    img.alt = file.name;
-                    img.dataset.toggle = "lightbox";
-                    img.dataset.type = "image";
-                    img.dataset.src = fileUrl;
-                    img.style.height = "128px";
-                    img.style.width = "auto";
-
-                    img.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        const lightbox = new Lightbox(img);
-                        lightbox.show();
-                    });
-
-                    imgCard.appendChild(img);
-
-                    previewContainer.appendChild(imgCard);
-                })
-                if (previewContainer.parentElement.querySelector("#preview_note") === null && element.files.length !== 0) {
-                    const selectNote = element.multiple ? "a different set of files" : "a different file";
-                    const noteElement = document.createElement("p");
-                    noteElement.id = "preview_note";
-                    noteElement.classList.add("text-muted");
-                    const emElement = document.createElement("em");
-                    const smallElement = document.createElement("small");
-                    smallElement.innerHTML = "Click on an image to view it in full size.\n" +
-                        "To change files, click on \"Choose Files\" again and select " + selectNote + ".";
-                    noteElement.appendChild(emElement);
-                    emElement.appendChild(smallElement);
-                    previewContainer.parentElement.appendChild(noteElement);
-                }
-                else if (element.files.length === 0) {
-                    previewContainer.parentElement.querySelector("#preview_note").remove();
-                }
-
+            if (previewContainer.parentElement.querySelector("#preview_note") === null && element.files.length !== 0) {
+                const selectNote = element.multiple ? "a different set of files" : "a different file";
+                const noteElement = document.createElement("p");
+                noteElement.id = "preview_note";
+                noteElement.classList.add("text-muted");
+                const emElement = document.createElement("em");
+                const smallElement = document.createElement("small");
+                smallElement.innerHTML = "Click on an image to view it in full size.\n" +
+                    "To change files, click on \"Choose Files\" again and select " + selectNote + ".";
+                noteElement.appendChild(emElement);
+                emElement.appendChild(smallElement);
+                previewContainer.parentElement.appendChild(noteElement);
             }
-        {% endif %}
-        {% if admin %}
+            else if (element.files.length === 0) {
+                previewContainer.parentElement.querySelector("#preview_note").remove();
+            }
 
-        {% endif %}
+        }
     </script>
 {% endblock %}

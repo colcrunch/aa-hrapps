@@ -1,0 +1,27 @@
+<div class="card card-primary mb-3">
+    <div class="card-header">
+        <div class="card-title">
+            Admin Attachments
+            <div class="float-end">
+                <button class="btn btn-xs btn-info" data-bs-toggle="offcanvas" data-bs-target="#uploadOffcanvasBottom" data-question="0">Upload</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if attachments|filter_by_question_id:0 %}
+            <div class="image-preview">
+            {% for attachment in attachments|filter_by_question_id:0 %}
+                <div class="card img-fluid" style="margin-right: 10px;">
+                    <a href="{{ attachment.file.url }}" data-toggle="lightbox">
+                        <img src="{{ attachment.file.url }}" class="card-img-full" style="height: 128px; width: auto;">
+                    </a>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="aa-callout aa-callout-info" style="border-top-color: var(--bs-card-border-color); border-bottom-color: var(--bs-card-border-color); border-right-color: var(--bs-card-border-color)">
+                No Admin Attachments
+            </div>
+        {% endif %}
+    </div>
+</div>
