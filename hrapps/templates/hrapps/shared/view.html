@@ -121,7 +121,7 @@
                     </table>
                 </div>
             </div>
-        {% if admin %}
+        {% if admin and perms.hrapps.view_admin_attachments %}
             {% include "hrapps/admin/partials/view/admin_attachment.html" %}
         {% endif %}
         </div>

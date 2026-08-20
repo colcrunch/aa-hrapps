@@ -160,3 +160,7 @@ class Attachment(models.Model):
 
     class Meta:
         default_permissions = (())
+        permissions = (
+            ("view_admin_attachments", "Can view admin attachments on form responses."),
+            ("upload_admin_attachments", "Can upload admin attachments on form responses."),
+        )

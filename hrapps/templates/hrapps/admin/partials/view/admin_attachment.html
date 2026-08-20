@@ -2,9 +2,11 @@
     <div class="card-header">
         <div class="card-title">
             Admin Attachments
+            {% if perms.hrapps.upload_admin_attachments %}
             <div class="float-end">
                 <button class="btn btn-xs btn-info" data-bs-toggle="offcanvas" data-bs-target="#uploadOffcanvasBottom" data-question="0">Upload</button>
             </div>
+            {% endif %}
         </div>
     </div>
     <div class="card-body">
