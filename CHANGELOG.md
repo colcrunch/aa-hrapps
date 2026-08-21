@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.2 - WIP
+## 1.0.2 - 2026-08-21
 ### Changes
 * Added an Admin Attachments section to the admin application view page.
 * Added permissions related to viewing and uploading admin attachments.
