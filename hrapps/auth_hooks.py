@@ -33,7 +33,7 @@ class HRMainMenuItemHook(MenuItemHook):
         )
 
     def render(self, request):
-        if request.user.has_perm("hrappperms.access_hrapps"):
+        if request.user.has_perm("hrapps.access_hrapps"):
             return MenuItemHook.render(self, request)
         return ''
 
