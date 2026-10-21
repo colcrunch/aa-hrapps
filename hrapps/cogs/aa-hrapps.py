@@ -273,6 +273,9 @@ class HRApps(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         logger.debug(f"Member joined the server.")
+        if not self.settings.enable_welcome_messages:
+            logger.debug(f"Welcome messages are disabled, skipping welcome message.")
+            return
         # Check if the user is part of an ignored state, if so we can return, no need to welcome.
         try:
             await asyncio.sleep(1)
