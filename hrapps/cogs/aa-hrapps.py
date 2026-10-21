@@ -275,7 +275,8 @@ class HRApps(commands.Cog):
         logger.debug(f"Member joined the server.")
         # Check if the user is part of an ignored state, if so we can return, no need to welcome.
         try:
-            user = get_auth_user(member._user, member.guild)
+            await asyncio.sleep(1)
+            user = get_auth_user(member.id, member.guild)
             if user.profile.state in self.settings.ignored_states.all():
                 logger.debug(f"User is in ignored state, no need to welcome.")
                 return
