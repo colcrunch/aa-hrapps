@@ -36,6 +36,11 @@
                             <input type="hidden" name="recruitment" value="true">
                             <div class="card-header">Recruitment Settings <div class="float-end"><input type="checkbox" name="enabled" {% if discord_settings.use_recruitment_threads %}checked{% endif %}/>&nbsp;<label for="recruitmentEnabled">Enabled?</label></div></div>
                             <div class="card-body">
+                            {% if db_recruitme_installed %}
+                                <div class="alert alert-danger" role="alert">
+                                    <p><strong>Incompatible Cog!</strong> <br> <code style="background: #42444891; color: floralwhite; border-radius: 6px; padding: .2rem .35rem;">aadiscordbot.cogs.recruit_me</code> found in discord bot cog list.</p>
+                                </div>
+                            {% endif %}
                                 <label for="recruitmentChannel">Recruitment Channel</label>
                                 <input type="text" class="form-control" id="recruitmentChannel" name="channel" value="{% if discord_settings.recruitment_thread_channel %}{{ discord_settings.recruitment_thread_channel }}{% endif %}">
                                 <label for="recruitmentRole">Recruiter Role</label>

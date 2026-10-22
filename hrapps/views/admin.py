@@ -36,6 +36,7 @@ def dashboard(request):
             .filter(status__in=("pending", "under_review"), form__corporation__corporation_id=user_corp)
 
     discordbot_installed = "aadiscordbot" in settings.INSTALLED_APPS
+    db_recruitme_installed = "aadiscordbot.cogs.recruit_me" in settings.DISCORD_BOT_COGS
     discord_settings = HRAppDiscordSettings.get_solo()
     states = State.objects.all()
 
@@ -45,6 +46,7 @@ def dashboard(request):
         {
             "active_apps": active_apps,
             "discordbot_installed": discordbot_installed,
+            "db_recruitme_installed": db_recruitme_installed,
             "discord_settings": discord_settings,
             "states": states,
         })
